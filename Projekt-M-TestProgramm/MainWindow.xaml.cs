@@ -304,6 +304,8 @@ namespace Projekt_M_TestProgramm
          * --- more to come ---
          * 
          */
+        static Brush functionNameColor = Brushes.Orange;
+
         public string Name { get; set; }
         public string BracketOpen { get; set; }
         public string BracketClose { get; set; }
@@ -313,7 +315,7 @@ namespace Projekt_M_TestProgramm
             // create the dockpanel
             DockPanel = new ExtendedDockPanel(
                 Dock.Left, 
-                new ExtendedLabel(Name + BracketOpen), Expression.CreateUI(), new ExtendedLabel(BracketClose)
+                new ExtendedLabel(functionNameColor, Name), new ExtendedLabel(BracketOpen), Expression.CreateUI(), new ExtendedLabel(BracketClose)
             );
             return DockPanel;
         }
@@ -326,9 +328,8 @@ namespace Projekt_M_TestProgramm
         public override ExtendedDockPanel CreateUI()
         {
             Rectangle a = new Rectangle();
-            // a.Width = 100;
             a.Height = 2;
-            a.Fill = Brushes.Black;
+            a.Fill = Brushes.White;
 
             DockPanel = new ExtendedDockPanel(Dock.Top, ExpressionA.CreateUI(), a, ExpressionB.CreateUI());
             DockPanel.Margin = new Thickness(10, 0, 10, 0);
@@ -418,6 +419,18 @@ namespace Projekt_M_TestProgramm
         {
             Padding = new Thickness(0);
             Margin = new Thickness(1, 0, 1, 0);
+            HorizontalAlignment = HorizontalAlignment.Center;
+            VerticalAlignment = VerticalAlignment.Center;
+            Foreground = Brushes.White;
+
+            Content = content;
+        }
+        public ExtendedLabel(Brush foreground, string content = "") : base()
+        {
+            Padding = new Thickness(0);
+            Margin = new Thickness(1, 0, 1, 0);
+            Foreground = foreground;
+
             HorizontalAlignment = HorizontalAlignment.Center;
             VerticalAlignment = VerticalAlignment.Center;
 

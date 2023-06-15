@@ -24,7 +24,7 @@
             </Border>
 		</Grid> -->
 		
-        <ScrollViewer  FontSize="42" FontStyle="Italic">
+        <ScrollViewer  FontSize="42" FontStyle="Italic" Foreground="White">
 			<DockPanel x:Name="EquationHistory" HorizontalAlignment="Center" VerticalAlignment="Center">
 				
 			</DockPanel>
