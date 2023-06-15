@@ -585,22 +585,22 @@ namespace Projekt_M_TestProgramm
              * a fraction that already has been reheighted.
              */
 
-            for (int i = needsHeightUpdate.Length - 1; i >= 0; i--)
+            foreach (Fraction fraction in needsHeightUpdate)
             {
                 // Heights
-                if (Math.Round(needsHeightUpdate[i].ExpressionA.DockPanel.ActualHeight, 3) > 
-                    Math.Round(needsHeightUpdate[i].ExpressionB.DockPanel.ActualHeight, 3))
+                if (Math.Round(fraction.ExpressionA.DockPanel.ActualHeight, 3) >
+                    Math.Round(fraction.ExpressionB.DockPanel.ActualHeight, 3))
                 {
-                    needsHeightUpdate[i].ExpressionB.DockPanel.Height = needsHeightUpdate[i].ExpressionA.DockPanel.ActualHeight;
+                    fraction.ExpressionB.DockPanel.Height = fraction.ExpressionA.DockPanel.ActualHeight;
                 }
-                else if (Math.Round(needsHeightUpdate[i].ExpressionA.DockPanel.ActualHeight, 3) < 
-                    Math.Round(needsHeightUpdate[i].ExpressionB.DockPanel.ActualHeight, 3))
+                else if (Math.Round(fraction.ExpressionA.DockPanel.ActualHeight, 3) <
+                    Math.Round(fraction.ExpressionB.DockPanel.ActualHeight, 3))
                 {
-                    needsHeightUpdate[i].ExpressionA.DockPanel.Height = needsHeightUpdate[i].ExpressionB.DockPanel.ActualHeight;
+                    fraction.ExpressionA.DockPanel.Height = fraction.ExpressionB.DockPanel.ActualHeight;
                 }
 
                 // line width TODO should this actually be a factor instead of additive offset?
-                (needsHeightUpdate[i].DockPanel.Children[1] as Rectangle).Width = (needsHeightUpdate[i].DockPanel.Children[1] as Rectangle).ActualWidth * 1.1;
+                (fraction.DockPanel.Children[1] as Rectangle).Width = (fraction.DockPanel.Children[1] as Rectangle).ActualWidth * 1.1;
             }
         }
         
