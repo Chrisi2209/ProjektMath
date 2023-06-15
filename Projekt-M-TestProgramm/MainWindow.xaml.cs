@@ -554,12 +554,22 @@ namespace Projekt_M_TestProgramm
 
         public override ExtendedDockPanel CreateUI()
         {
-            Rectangle a = new Rectangle();
-            a.Height = 2;
-            a.Fill = Brushes.White;
+            Rectangle fractionBar = new Rectangle();
 
-            DockPanel = new ExtendedDockPanel(Dock.Top, ExpressionA.CreateUI(), a, ExpressionB.CreateUI());
-            DockPanel.Margin = new Thickness(10, 0, 10, 0);
+            fractionBar.Height = 2;
+            fractionBar.Fill = Brushes.White;
+
+            ExtendedDockPanel TopUi = ExpressionA.CreateUI();
+            ExtendedDockPanel BottomUi = ExpressionB.CreateUI();
+
+            // fraction bar should be bigger than content
+            TopUi.SetSideMargin();
+            BottomUi.SetSideMargin();
+
+            DockPanel = new ExtendedDockPanel(Dock.Top, TopUi, fractionBar, BottomUi);
+
+            // just a little distance before and after the fraction bar
+            DockPanel.SetSideMargin();
             needsHeightUpdate.Append(this);
 
             return DockPanel;
@@ -726,12 +736,18 @@ namespace Projekt_M_TestProgramm
 
     public class ExtendedLabel : Label
     {
-        public ExtendedLabel(string content="") : base() 
+        private void InitialiseValues()
         {
+            // helper for constructors
             Padding = new Thickness(0);
             Margin = new Thickness(1, 0, 1, 0);
             HorizontalAlignment = HorizontalAlignment.Center;
             VerticalAlignment = VerticalAlignment.Center;
+        }
+
+        public ExtendedLabel(string content="") : base() 
+        {
+            InitialiseValues();
             Foreground = Brushes.White;
 
             Content = content;
@@ -739,10 +755,7 @@ namespace Projekt_M_TestProgramm
 
         public ExtendedLabel(char content = '\0') : base()
         {
-            Padding = new Thickness(0);
-            Margin = new Thickness(1, 0, 1, 0);
-            HorizontalAlignment = HorizontalAlignment.Center;
-            VerticalAlignment = VerticalAlignment.Center;
+            InitialiseValues();
             Foreground = Brushes.White;
 
             Content = content;
@@ -750,15 +763,13 @@ namespace Projekt_M_TestProgramm
 
         public ExtendedLabel(Brush foreground, string content = "") : base()
         {
-            Padding = new Thickness(0);
-            Margin = new Thickness(1, 0, 1, 0);
+            InitialiseValues();
             Foreground = foreground;
-
-            HorizontalAlignment = HorizontalAlignment.Center;
-            VerticalAlignment = VerticalAlignment.Center;
 
             Content = content;
         }
+
+        
     }
 
     public class ExtendedDockPanel: DockPanel
@@ -775,12 +786,18 @@ namespace Projekt_M_TestProgramm
             VerticalAlignment = VerticalAlignment.Center;
         }
 
-        public ExtendedDockPanel(): base() {}
+        public ExtendedDockPanel(): base() { }
 
         public void DockAt(UIElement element, Dock dockDirection)
         {
             DockPanel.SetDock(element, dockDirection);
             this.Children.Add(element);
+        }
+
+        public void SetSideMargin()
+        {
+            // Sometimes, some distance makes us happy
+            Margin = new Thickness(5, 0, 5, 0);
         }
     }
 }
