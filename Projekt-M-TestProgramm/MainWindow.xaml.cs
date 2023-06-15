@@ -27,58 +27,58 @@ namespace Projekt_M_TestProgramm
 
             Sum summe = new Sum();
             summe.Expressions = new BinArray<Expression>(4);
-            summe[0] = new Function();
-            (summe[0] as Function).Name = "-";
-            (summe[0] as Function).Expression = new Number();
-            ((summe[0] as Function).Expression as Number).Num = 12;
+            summe[0] = new OperationPart();
+            (summe[0] as OperationPart).Operation = '-';
+            (summe[0] as OperationPart).Expression = new Number();
+            ((summe[0] as OperationPart).Expression as Number).Num = 12;
 
-            summe[1] = new Function();
-            (summe[1] as Function).Name = "+";
-            (summe[1] as Function).Expression = new Number();
-            ((summe[1] as Function).Expression as Number).Num = 5;
+            summe[1] = new OperationPart();
+            (summe[1] as OperationPart).Operation = '+';
+            (summe[1] as OperationPart).Expression = new Number();
+            ((summe[1] as OperationPart).Expression as Number).Num = 5;
 
             summe[2] = new Product();
             (summe[2] as Product).Expressions = new BinArray<Expression>(2);
 
-            (summe[2] as Product).Expressions[0] = new Function();
-            ((summe[2] as Product).Expressions[0] as Function).Name = "-";
-            ((summe[2] as Product).Expressions[0] as Function).Expression = new Number();
-            (((summe[2] as Product).Expressions[0] as Function).Expression as Number).Num = 23;
+            (summe[2] as Product).Expressions[0] = new OperationPart();
+            ((summe[2] as Product).Expressions[0] as OperationPart).Operation = '-';
+            ((summe[2] as Product).Expressions[0] as OperationPart).Expression = new Number();
+            (((summe[2] as Product).Expressions[0] as OperationPart).Expression as Number).Num = 23;
             
-            (summe[2] as Product).Expressions[1] = new Function();
-            ((summe[2] as Product).Expressions[1] as Function).Name = "*";
-            ((summe[2] as Product).Expressions[1] as Function).Expression = new Number();
-            (((summe[2] as Product).Expressions[1] as Function).Expression as Number).Num = 17;
+            (summe[2] as Product).Expressions[1] = new OperationPart();
+            ((summe[2] as Product).Expressions[1] as OperationPart).Operation = '*';
+            ((summe[2] as Product).Expressions[1] as OperationPart).Expression = new Number();
+            (((summe[2] as Product).Expressions[1] as OperationPart).Expression as Number).Num = 17;
 
-            summe[3] = new Function();
-            (summe[3] as Function).Name = "+";
-            (summe[3] as Function).Expression = new Fraction();
+            summe[3] = new OperationPart();
+            (summe[3] as OperationPart).Operation = '+';
+            (summe[3] as OperationPart).Expression = new Fraction();
 
-            ((summe[3] as Function).Expression as Fraction).ExpressionA = new Sum();
-            (((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions = new BinArray<Expression>(2);
-            (((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions[0] = new Function();
-            ((((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions[0] as Function).Name = "+";
-            ((((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions[0] as Function).Expression = new Number();
-            (((((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions[0] as Function).Expression as Number).Num = 4;
+            ((summe[3] as OperationPart).Expression as Fraction).ExpressionA = new Sum();
+            (((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions = new BinArray<Expression>(2);
+            (((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[0] = new OperationPart();
+            ((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[0] as OperationPart).Operation = '+';
+            ((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[0] as OperationPart).Expression = new Number();
+            (((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[0] as OperationPart).Expression as Number).Num = 4;
 
-            (((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions[1] = new Function();
-            ((((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions[1] as Function).Name = "-";
+            (((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[1] = new OperationPart();
+            ((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[1] as OperationPart).Operation = '-';
 
-            ((((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions[1] as Function).Expression = new Fraction();
-            Fraction fr = ((((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions[1] as Function).Expression as Fraction;
-            fr.ExpressionA = new Function();
-            (fr.ExpressionA as Function).Name = "+";
-            (fr.ExpressionA as Function).Expression = new Number();
-            ((fr.ExpressionA as Function).Expression as Number).Num = 12123;
-            fr.ExpressionB = new Function();
-            (fr.ExpressionB as Function).Name = "-";
-            (fr.ExpressionB as Function).Expression = new Number();
-            ((fr.ExpressionB as Function).Expression as Number).Num = 8;
+            ((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[1] as OperationPart).Expression = new Fraction();
+            Fraction fr = ((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[1] as OperationPart).Expression as Fraction;
+            fr.ExpressionA = new OperationPart();
+            (fr.ExpressionA as OperationPart).Operation = '+';
+            (fr.ExpressionA as OperationPart).Expression = new Number();
+            ((fr.ExpressionA as OperationPart).Expression as Number).Num = 12123;
+            fr.ExpressionB = new OperationPart();
+            (fr.ExpressionB as OperationPart).Operation = '-';
+            (fr.ExpressionB as OperationPart).Expression = new Number();
+            ((fr.ExpressionB as OperationPart).Expression as Number).Num = 8;
             
-            ((summe[3] as Function).Expression as Fraction).ExpressionB = new Function();
-            (((summe[3] as Function).Expression as Fraction).ExpressionB as Function).Name = "+";
-            (((summe[3] as Function).Expression as Fraction).ExpressionB as Function).Expression = new Number();
-            ((((summe[3] as Function).Expression as Fraction).ExpressionB as Function).Expression as Number).Num = 5;
+            ((summe[3] as OperationPart).Expression as Fraction).ExpressionB = new OperationPart();
+            (((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Operation = '+';
+            (((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Expression = new Number();
+            ((((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Expression as Number).Num = 5;
 
             
             summe.CreateUI();
@@ -408,6 +408,8 @@ namespace Projekt_M_TestProgramm
 
     public class OperationPart : UnitExpression
     {
+        static Brush operationColor = Brushes.Blue;
+
         public char Operation { get; set; }
 
         static public OperationPart Create(string input, out string nextInput)
@@ -460,6 +462,16 @@ namespace Projekt_M_TestProgramm
             operationPart.Operation = input[0];
             nextInput = input.Substring(1);
             return operationPart;
+        }
+
+        public override ExtendedDockPanel CreateUI()
+        {
+            // create the dockpanel
+            DockPanel = new ExtendedDockPanel(
+                Dock.Left,
+                new ExtendedLabel(operationColor, Operation), Expression.CreateUI()
+            );
+            return DockPanel;
         }
     }
 
@@ -769,7 +781,16 @@ namespace Projekt_M_TestProgramm
             Content = content;
         }
 
-        
+
+        public ExtendedLabel(Brush foreground, char content = '\0') : base()
+        {
+            InitialiseValues();
+            Foreground = foreground;
+
+            Content = content;
+        }
+
+
     }
 
     public class ExtendedDockPanel: DockPanel
