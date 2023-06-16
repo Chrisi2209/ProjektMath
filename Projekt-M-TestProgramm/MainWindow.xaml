@@ -23,11 +23,10 @@
 		        </DockPanel>
             </Border>
 		</Grid> -->
-		
-        <ScrollViewer  FontSize="42" FontStyle="Italic" Foreground="White">
-			<DockPanel x:Name="EquationHistory" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <ScrollViewer  FontSize="42" FontStyle="Italic" Foreground="White" KeyDown="ScrollViewer_KeyDown" PreviewTextInput="ScrollViewer_PreviewTextInput">
+			<local:ExtendedDockPanel x:Name="EquationHistory" HorizontalAlignment="Center" VerticalAlignment="Center">
 				
-			</DockPanel>
+			</local:ExtendedDockPanel>
         </ScrollViewer>
     </Grid>
 </Window>

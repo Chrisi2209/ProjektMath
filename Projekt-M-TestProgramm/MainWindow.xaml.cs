@@ -24,7 +24,7 @@ namespace Projekt_M_TestProgramm
         public MainWindow()
         {
             InitializeComponent();
-
+            /*
             Sum summe = new Sum();
             summe.Expressions = new BinArray<Expression>(4);
             summe[0] = new OperationPart();
@@ -82,15 +82,87 @@ namespace Projekt_M_TestProgramm
 
             
             summe.CreateUI();
-            DockPanel.SetDock(summe.DockPanel, Dock.Left);
-            EquationHistory.Children.Add(summe.DockPanel);
-
-            // TestLabel.Content = summe[3].DockPanel.Width;
+            EquationHistory.DockAt(summe.DockPanel, Dock.Top);
+            
+            TestLabel.Content = summe[3].DockPanel.Width;
+            */
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            // Update heights on fractions so that the fraction bars are centered
             Fraction.updateHeightsAndLineWidths();
+        }
+
+
+
+
+        private void ScrollViewer_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (Convert.ToInt32(TestLabel.Content) == 1)
+            {
+                TestLabel.Content = 0;
+            }
+            else
+            {
+                TestLabel.Content = 1;
+            }
+
+            if (e.Key == Key.Oem5)
+            {
+                AddInput('^');
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Left)
+            {
+
+                AddInput(Convert.ToChar(1));
+            }
+            else if (e.Key == Key.Right)
+            {
+                AddInput(Convert.ToChar(2));
+            }
+        }
+
+        private void ScrollViewer_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            char input = e.Text[0];
+            // 59 = ; | 63 = ? | 64 = @ | 92 = \ | 96 = ' | 127 = DEL
+            if (input == '!' || input == 8 || (input >= 40 && input != 59 && input != 63 && input != 64 && input != 92 && input != 96 && input < 127))
+            {
+                AddInput(e.Text[0]);
+            }
+        }
+
+        static string inputString = "";
+        static int cursorPosition = 0;
+        private void AddInput(char newChar)
+        {
+            /*
+             * int values 1 and 2 are reserved for Left and Right arrows
+             */
+            if (newChar == 1)
+            {
+                TestLabel.Content = "1aaaa";
+                cursorPosition--;
+            }
+            else if (newChar == 2)
+            {
+                TestLabel.Content = "1aaaa";
+                cursorPosition++;
+            }
+            else if (newChar == 8)  // Backspace
+            {
+                if (cursorPosition != 0)  // Exception is raised if not checked
+                {
+                    inputString = inputString.Remove(--cursorPosition);
+                }
+            }
+            else
+            {
+                inputString = inputString.Insert(cursorPosition++, "" + newChar);  // "" + newChar to convert into string
+            }
+            EquationHistory.DockAt(new ExtendedLabel(inputString), Dock.Top);
         }
     }
 
