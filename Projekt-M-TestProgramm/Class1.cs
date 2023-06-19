@@ -2082,5 +2082,11 @@ namespace Simon
             while (0 < b--) output *= a--;
             return output;
         }
+
+        static public int gcd(int a, int b)
+        {
+            bool neg = a < 0 && b < 0;
+            return 0;
+        }
     }
 }

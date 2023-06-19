@@ -139,6 +139,7 @@ namespace Projekt_M_TestProgramm
         }
 
         static string inputString = "";
+        static BinArray<bool?> inputvisible = new BinArray<bool?>(0);
         static int cursorPosition = 0;
         private void AddInput(char newChar)
         {
@@ -181,14 +182,23 @@ namespace Projekt_M_TestProgramm
     public class Expression
     {
         // its own UI element
-        protected ExtendedDockPanel dockPanel;
+        private ExtendedDockPanel dockPanel;
+        private bool? visible;
+
         public ExtendedDockPanel DockPanel {
             get {return dockPanel;} 
             protected set {dockPanel = value;}
         }
-
         public Expression BackPointer { get; set; }
-        public bool? Visible { get; set; }
+        public bool? Visible
+        {
+            get { return visible; }
+            set
+            {
+                visible = value;
+                for (int i = 0; i < Length; i++) this[i].Visible = value;
+            }
+        }
         public int Index
         {
             get
@@ -226,6 +236,7 @@ namespace Projekt_M_TestProgramm
                 throw new Exception();
             }
             expression.BackPointer = backPointer;
+            expression.visible = true;
             return expression;
         }
         
@@ -277,12 +288,10 @@ namespace Projekt_M_TestProgramm
 
         public ExtendedDockPanel CreateLabelUI(string name)
         {
-            dockPanel = new ExtendedDockPanel(Dock.Left, new ExtendedLabel(name));
+            DockPanel = new ExtendedDockPanel(Dock.Left, new ExtendedLabel(name));
 
-            return dockPanel;
+            return DockPanel;
         }
-
-
     }
 
     public class UnitExpression : Expression
@@ -655,58 +664,6 @@ namespace Projekt_M_TestProgramm
     {
         static public BinArray<Fraction> needsHeightUpdate = new BinArray<Fraction>();
 
-        public override ExtendedDockPanel CreateUI()
-        {
-            Rectangle fractionBar = new Rectangle();
-
-            fractionBar.Height = 2;
-            fractionBar.Fill = Brushes.White;
-
-            ExtendedDockPanel TopUi = ExpressionA.CreateUI();
-            ExtendedDockPanel BottomUi = ExpressionB.CreateUI();
-
-            // fraction bar should be bigger than content
-            TopUi.SetSideMargin();
-            BottomUi.SetSideMargin();
-
-            DockPanel = new ExtendedDockPanel(Dock.Top, TopUi, fractionBar, BottomUi);
-
-            // just a little distance before and after the fraction bar
-            DockPanel.SetSideMargin();
-            needsHeightUpdate.Append(this);
-
-            return DockPanel;
-        }
-
-        static public void updateHeightsAndLineWidths()
-        {
-            /*
-             * Updates all heights for the fractions that need a height update so that it is
-             * centered again (upper expression is bigger than lower).
-             * needsHeightUpdate is iterated in reverse because
-             * MAYBE (TODO) then there can't be a fraction changed that would change the height of
-             * a fraction that already has been reheighted.
-             */
-
-            foreach (Fraction fraction in needsHeightUpdate)
-            {
-                // Heights
-                if (Math.Round(fraction.ExpressionA.DockPanel.ActualHeight, 3) >
-                    Math.Round(fraction.ExpressionB.DockPanel.ActualHeight, 3))
-                {
-                    fraction.ExpressionB.DockPanel.Height = fraction.ExpressionA.DockPanel.ActualHeight;
-                }
-                else if (Math.Round(fraction.ExpressionA.DockPanel.ActualHeight, 3) <
-                    Math.Round(fraction.ExpressionB.DockPanel.ActualHeight, 3))
-                {
-                    fraction.ExpressionA.DockPanel.Height = fraction.ExpressionB.DockPanel.ActualHeight;
-                }
-
-                // line width TODO should this actually be a factor instead of additive offset?
-                (fraction.DockPanel.Children[1] as Rectangle).Width = (fraction.DockPanel.Children[1] as Rectangle).ActualWidth * 1.1;
-            }
-        }
-        
         static public Fraction Create(string input, out string nextInputA, out string nextInputB)
         {
             Fraction fraction = new Fraction();
@@ -790,6 +747,58 @@ namespace Projekt_M_TestProgramm
             return fraction;
         }
 
+        public override ExtendedDockPanel CreateUI()
+        {
+            Rectangle fractionBar = new Rectangle();
+
+            fractionBar.Height = 2;
+            fractionBar.Fill = Brushes.White;
+
+            ExtendedDockPanel TopUi = ExpressionA.CreateUI();
+            ExtendedDockPanel BottomUi = ExpressionB.CreateUI();
+
+            // fraction bar should be bigger than content
+            TopUi.SetSideMargin();
+            BottomUi.SetSideMargin();
+
+            DockPanel = new ExtendedDockPanel(Dock.Top, TopUi, fractionBar, BottomUi);
+
+            // just a little distance before and after the fraction bar
+            DockPanel.SetSideMargin();
+            needsHeightUpdate.Append(this);
+
+            return DockPanel;
+        }
+
+        static public void updateHeightsAndLineWidths()
+        {
+            /*
+             * Updates all heights for the fractions that need a height update so that it is
+             * centered again (upper expression is bigger than lower).
+             * needsHeightUpdate is iterated in reverse because
+             * MAYBE (TODO) then there can't be a fraction changed that would change the height of
+             * a fraction that already has been reheighted.
+             */
+
+            foreach (Fraction fraction in needsHeightUpdate)
+            {
+                // Heights
+                if (Math.Round(fraction.ExpressionA.DockPanel.ActualHeight, 3) >
+                    Math.Round(fraction.ExpressionB.DockPanel.ActualHeight, 3))
+                {
+                    fraction.ExpressionB.DockPanel.Height = fraction.ExpressionA.DockPanel.ActualHeight;
+                }
+                else if (Math.Round(fraction.ExpressionA.DockPanel.ActualHeight, 3) <
+                    Math.Round(fraction.ExpressionB.DockPanel.ActualHeight, 3))
+                {
+                    fraction.ExpressionA.DockPanel.Height = fraction.ExpressionB.DockPanel.ActualHeight;
+                }
+
+                // line width TODO should this actually be a factor instead of additive offset?
+                (fraction.DockPanel.Children[1] as Rectangle).Width = (fraction.DockPanel.Children[1] as Rectangle).ActualWidth * 1.1;
+            }
+        }
+        
         public override string ToString()
         {
             return "(" + ExpressionA.ToString() + "/" + ExpressionB.ToString() + ")";
