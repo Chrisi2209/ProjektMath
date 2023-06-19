@@ -6,15 +6,28 @@
         xmlns:local="clr-namespace:Projekt_M_TestProgramm"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        Background="#343541">
+        Background="#343541" Loaded="Window_Loaded">
     <!--0x 353535 (dunkel grau)-->
     <!--0x 343541 (dunkel grau sehr leichter BlauTon)-->
     
     <Grid>
-        <ScrollViewer>
-            <StackPanel>
-                
-            </StackPanel>
+		<Label x:Name="TestLabel"></Label>
+		<!--
+		<Grid>
+			<Border BorderBrush="Red" BorderThickness="2">
+		        <DockPanel HorizontalAlignment="Center">
+			        <Label  DockPanel.Dock="Top">Mitte</Label>
+			        <Label DockPanel.Dock="Top">Rechts</Label>
+			        <Label DockPanel.Dock="Top">Links</Label>
+			        <Label DockPanel.Dock="Top">Stretch</Label>
+		        </DockPanel>
+            </Border>
+		</Grid> -->
+		
+        <ScrollViewer  FontSize="42" FontStyle="Italic" Foreground="White">
+			<DockPanel x:Name="EquationHistory" HorizontalAlignment="Center" VerticalAlignment="Center">
+				
+			</DockPanel>
         </ScrollViewer>
     </Grid>
 </Window>
