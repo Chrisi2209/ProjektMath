@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 
 namespace Simon
 {
@@ -1352,6 +1353,12 @@ namespace Simon
             Length = array.Length;
             this.array = new T[NextBin(Length)];
             Array.Copy(array, this.array, Length);
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            for (int i = 0; i < Length; ++i)
+                yield return this[i];
         }
 
 

@@ -24,73 +24,154 @@ namespace Projekt_M_TestProgramm
         public MainWindow()
         {
             InitializeComponent();
-
+            KeyDown += ScrollViewer_KeyDown;
+            /*
             Sum summe = new Sum();
             summe.Expressions = new BinArray<Expression>(4);
-            summe[0] = new Function();
-            (summe[0] as Function).Name = "-";
-            (summe[0] as Function).Expression = new Number();
-            ((summe[0] as Function).Expression as Number).Num = 12;
+            summe[0] = new OperationPart();
+            (summe[0] as OperationPart).Operation = '-';
+            (summe[0] as OperationPart).Expression = new Number();
+            ((summe[0] as OperationPart).Expression as Number).Num = 12;
 
-            summe[1] = new Function();
-            (summe[1] as Function).Name = "+";
-            (summe[1] as Function).Expression = new Number();
-            ((summe[1] as Function).Expression as Number).Num = 5;
+            summe[1] = new OperationPart();
+            (summe[1] as OperationPart).Operation = '+';
+            (summe[1] as OperationPart).Expression = new Number();
+            ((summe[1] as OperationPart).Expression as Number).Num = 5;
 
             summe[2] = new Product();
             (summe[2] as Product).Expressions = new BinArray<Expression>(2);
 
-            (summe[2] as Product).Expressions[0] = new Function();
-            ((summe[2] as Product).Expressions[0] as Function).Name = "-";
-            ((summe[2] as Product).Expressions[0] as Function).Expression = new Number();
-            (((summe[2] as Product).Expressions[0] as Function).Expression as Number).Num = 23;
+            (summe[2] as Product).Expressions[0] = new OperationPart();
+            ((summe[2] as Product).Expressions[0] as OperationPart).Operation = '-';
+            ((summe[2] as Product).Expressions[0] as OperationPart).Expression = new Number();
+            (((summe[2] as Product).Expressions[0] as OperationPart).Expression as Number).Num = 23;
             
-            (summe[2] as Product).Expressions[1] = new Function();
-            ((summe[2] as Product).Expressions[1] as Function).Name = "*";
-            ((summe[2] as Product).Expressions[1] as Function).Expression = new Number();
-            (((summe[2] as Product).Expressions[1] as Function).Expression as Number).Num = 17;
+            (summe[2] as Product).Expressions[1] = new OperationPart();
+            ((summe[2] as Product).Expressions[1] as OperationPart).Operation = '*';
+            ((summe[2] as Product).Expressions[1] as OperationPart).Expression = new Number();
+            (((summe[2] as Product).Expressions[1] as OperationPart).Expression as Number).Num = 17;
 
-            summe[3] = new Function();
-            (summe[3] as Function).Name = "+";
-            (summe[3] as Function).Expression = new Fraction();
+            summe[3] = new OperationPart();
+            (summe[3] as OperationPart).Operation = '+';
+            (summe[3] as OperationPart).Expression = new Fraction();
 
-            ((summe[3] as Function).Expression as Fraction).ExpressionA = new Sum();
-            (((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions = new BinArray<Expression>(2);
-            (((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions[0] = new Function();
-            ((((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions[0] as Function).Name = "+";
-            ((((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions[0] as Function).Expression = new Number();
-            (((((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions[0] as Function).Expression as Number).Num = 4;
+            ((summe[3] as OperationPart).Expression as Fraction).ExpressionA = new Sum();
+            (((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions = new BinArray<Expression>(2);
+            (((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[0] = new OperationPart();
+            ((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[0] as OperationPart).Operation = '+';
+            ((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[0] as OperationPart).Expression = new Number();
+            (((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[0] as OperationPart).Expression as Number).Num = 4;
 
-            (((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions[1] = new Function();
-            ((((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions[1] as Function).Name = "-";
+            (((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[1] = new OperationPart();
+            ((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[1] as OperationPart).Operation = '-';
 
-            ((((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions[1] as Function).Expression = new Fraction();
-            Fraction fr = ((((summe[3] as Function).Expression as Fraction).ExpressionA as Sum).Expressions[1] as Function).Expression as Fraction;
-            fr.ExpressionA = new Function();
-            (fr.ExpressionA as Function).Name = "+";
-            (fr.ExpressionA as Function).Expression = new Number();
-            ((fr.ExpressionA as Function).Expression as Number).Num = 12123;
-            fr.ExpressionB = new Function();
-            (fr.ExpressionB as Function).Name = "-";
-            (fr.ExpressionB as Function).Expression = new Number();
-            ((fr.ExpressionB as Function).Expression as Number).Num = 8;
+            ((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[1] as OperationPart).Expression = new Fraction();
+            Fraction fr = ((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[1] as OperationPart).Expression as Fraction;
+            fr.ExpressionA = new OperationPart();
+            (fr.ExpressionA as OperationPart).Operation = '+';
+            (fr.ExpressionA as OperationPart).Expression = new Number();
+            ((fr.ExpressionA as OperationPart).Expression as Number).Num = 12123;
+            fr.ExpressionB = new OperationPart();
+            (fr.ExpressionB as OperationPart).Operation = '-';
+            (fr.ExpressionB as OperationPart).Expression = new Number();
+            ((fr.ExpressionB as OperationPart).Expression as Number).Num = 8;
             
-            ((summe[3] as Function).Expression as Fraction).ExpressionB = new Function();
-            (((summe[3] as Function).Expression as Fraction).ExpressionB as Function).Name = "+";
-            (((summe[3] as Function).Expression as Fraction).ExpressionB as Function).Expression = new Number();
-            ((((summe[3] as Function).Expression as Fraction).ExpressionB as Function).Expression as Number).Num = 5;
+            ((summe[3] as OperationPart).Expression as Fraction).ExpressionB = new OperationPart();
+            (((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Operation = '+';
+            (((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Expression = new Number();
+            ((((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Expression as Number).Num = 5;
 
             
             summe.CreateUI();
-            DockPanel.SetDock(summe.DockPanel, Dock.Left);
-            EquationHistory.Children.Add(summe.DockPanel);
-
-            // TestLabel.Content = summe[3].DockPanel.Width;
+            EquationHistory.DockAt(summe.DockPanel, Dock.Top);
+            
+            TestLabel.Content = summe[3].DockPanel.Width;
+            */
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            // Update heights on fractions so that the fraction bars are centered
             Fraction.updateHeightsAndLineWidths();
+        }
+
+
+
+
+        private void ScrollViewer_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (Convert.ToInt32(TestLabel.Content) == 1)
+            {
+                TestLabel.Content = 0;
+            }
+            else
+            {
+                TestLabel.Content = 1;
+            }
+
+
+            if (e.Key == Key.Oem5)
+            {
+                AddInput('^');
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Left)
+            {
+                TestLabel.Content = 100000000;
+                AddInput(Convert.ToChar(1));
+            }
+            else if (e.Key == Key.Right)
+            {
+                TestLabel.Content = 200000000;
+                AddInput(Convert.ToChar(2));
+            }
+        }
+
+        private void ScrollViewer_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            char input = e.Text[0];
+            // 59 = ; | 63 = ? | 64 = @ | 92 = \ | 96 = ' | 127 = DEL
+            if (input == '!' || input == 8 || (input >= 40 && input != 59 && input != 63 && input != 64 && input != 92 && input != 96 && input < 127))
+            {
+                AddInput(e.Text[0]);
+            }
+        }
+
+        static string inputString = "";
+        static int cursorPosition = 0;
+        private void AddInput(char newChar)
+        {
+            /*
+             * int values 1 and 2 are reserved for Left and Right arrows
+             */
+            if (newChar == 1)
+            {
+                TestLabel.Content = "1aaaa";
+                cursorPosition--;
+            }
+            else if (newChar == 2)
+            {
+                TestLabel.Content = "1aaaa";
+                cursorPosition++;
+            }
+            else if (newChar == 8)  // Backspace
+            {
+                if (cursorPosition != 0)  // Exception is raised if not checked
+                {
+                    inputString = inputString.Remove(--cursorPosition);
+                }
+            }
+            else
+            {
+                inputString = inputString.Insert(cursorPosition++, "" + newChar);  // "" + newChar to convert into string
+            }
+            EquationHistory.Clear();
+            EquationHistory.DockAt(new ExtendedLabel(inputString), Dock.Top);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            TestLabel.Content = "abcdefg";
         }
     }
 
@@ -419,6 +500,8 @@ namespace Projekt_M_TestProgramm
 
     public class OperationPart : UnitExpression
     {
+        static Brush operationColor = Brushes.Blue;
+
         public char Operation { get; set; }
 
         static public OperationPart Create(string input, out string nextInput)
@@ -471,6 +554,16 @@ namespace Projekt_M_TestProgramm
             operationPart.Operation = input[0];
             nextInput = input.Substring(1);
             return operationPart;
+        }
+
+        public override ExtendedDockPanel CreateUI()
+        {
+            // create the dockpanel
+            DockPanel = new ExtendedDockPanel(
+                Dock.Left,
+                new ExtendedLabel(operationColor, Operation), Expression.CreateUI()
+            );
+            return DockPanel;
         }
     }
 
@@ -564,12 +657,22 @@ namespace Projekt_M_TestProgramm
 
         public override ExtendedDockPanel CreateUI()
         {
-            Rectangle a = new Rectangle();
-            a.Height = 2;
-            a.Fill = Brushes.White;
+            Rectangle fractionBar = new Rectangle();
 
-            DockPanel = new ExtendedDockPanel(Dock.Top, ExpressionA.CreateUI(), a, ExpressionB.CreateUI());
-            DockPanel.Margin = new Thickness(10, 0, 10, 0);
+            fractionBar.Height = 2;
+            fractionBar.Fill = Brushes.White;
+
+            ExtendedDockPanel TopUi = ExpressionA.CreateUI();
+            ExtendedDockPanel BottomUi = ExpressionB.CreateUI();
+
+            // fraction bar should be bigger than content
+            TopUi.SetSideMargin();
+            BottomUi.SetSideMargin();
+
+            DockPanel = new ExtendedDockPanel(Dock.Top, TopUi, fractionBar, BottomUi);
+
+            // just a little distance before and after the fraction bar
+            DockPanel.SetSideMargin();
             needsHeightUpdate.Append(this);
 
             return DockPanel;
@@ -585,22 +688,22 @@ namespace Projekt_M_TestProgramm
              * a fraction that already has been reheighted.
              */
 
-            for (int i = needsHeightUpdate.Length - 1; i >= 0; i--)
+            foreach (Fraction fraction in needsHeightUpdate)
             {
                 // Heights
-                if (Math.Round(needsHeightUpdate[i].ExpressionA.DockPanel.ActualHeight, 3) > 
-                    Math.Round(needsHeightUpdate[i].ExpressionB.DockPanel.ActualHeight, 3))
+                if (Math.Round(fraction.ExpressionA.DockPanel.ActualHeight, 3) >
+                    Math.Round(fraction.ExpressionB.DockPanel.ActualHeight, 3))
                 {
-                    needsHeightUpdate[i].ExpressionB.DockPanel.Height = needsHeightUpdate[i].ExpressionA.DockPanel.ActualHeight;
+                    fraction.ExpressionB.DockPanel.Height = fraction.ExpressionA.DockPanel.ActualHeight;
                 }
-                else if (Math.Round(needsHeightUpdate[i].ExpressionA.DockPanel.ActualHeight, 3) < 
-                    Math.Round(needsHeightUpdate[i].ExpressionB.DockPanel.ActualHeight, 3))
+                else if (Math.Round(fraction.ExpressionA.DockPanel.ActualHeight, 3) <
+                    Math.Round(fraction.ExpressionB.DockPanel.ActualHeight, 3))
                 {
-                    needsHeightUpdate[i].ExpressionA.DockPanel.Height = needsHeightUpdate[i].ExpressionB.DockPanel.ActualHeight;
+                    fraction.ExpressionA.DockPanel.Height = fraction.ExpressionB.DockPanel.ActualHeight;
                 }
 
                 // line width TODO should this actually be a factor instead of additive offset?
-                (needsHeightUpdate[i].DockPanel.Children[1] as Rectangle).Width = (needsHeightUpdate[i].DockPanel.Children[1] as Rectangle).ActualWidth * 1.1;
+                (fraction.DockPanel.Children[1] as Rectangle).Width = (fraction.DockPanel.Children[1] as Rectangle).ActualWidth * 1.1;
             }
         }
         
@@ -867,12 +970,18 @@ namespace Projekt_M_TestProgramm
 
     public class ExtendedLabel : Label
     {
-        public ExtendedLabel(string content="") : base() 
+        private void InitialiseValues()
         {
+            // helper for constructors
             Padding = new Thickness(0);
             Margin = new Thickness(1, 0, 1, 0);
             HorizontalAlignment = HorizontalAlignment.Center;
             VerticalAlignment = VerticalAlignment.Center;
+        }
+
+        public ExtendedLabel(string content="") : base() 
+        {
+            InitialiseValues();
             Foreground = Brushes.White;
 
             Content = content;
@@ -880,10 +989,7 @@ namespace Projekt_M_TestProgramm
 
         public ExtendedLabel(char content = '\0') : base()
         {
-            Padding = new Thickness(0);
-            Margin = new Thickness(1, 0, 1, 0);
-            HorizontalAlignment = HorizontalAlignment.Center;
-            VerticalAlignment = VerticalAlignment.Center;
+            InitialiseValues();
             Foreground = Brushes.White;
 
             Content = content;
@@ -891,15 +997,22 @@ namespace Projekt_M_TestProgramm
 
         public ExtendedLabel(Brush foreground, string content = "") : base()
         {
-            Padding = new Thickness(0);
-            Margin = new Thickness(1, 0, 1, 0);
+            InitialiseValues();
             Foreground = foreground;
-
-            HorizontalAlignment = HorizontalAlignment.Center;
-            VerticalAlignment = VerticalAlignment.Center;
 
             Content = content;
         }
+
+
+        public ExtendedLabel(Brush foreground, char content = '\0') : base()
+        {
+            InitialiseValues();
+            Foreground = foreground;
+
+            Content = content;
+        }
+
+
     }
 
     public class ExtendedDockPanel: DockPanel
@@ -916,12 +1029,26 @@ namespace Projekt_M_TestProgramm
             VerticalAlignment = VerticalAlignment.Center;
         }
 
-        public ExtendedDockPanel(): base() {}
+        public ExtendedDockPanel(): base() { }
 
         public void DockAt(UIElement element, Dock dockDirection)
         {
             DockPanel.SetDock(element, dockDirection);
             this.Children.Add(element);
+        }
+
+        public void SetSideMargin()
+        {
+            // Sometimes, some distance makes us happy
+            Margin = new Thickness(5, 0, 5, 0);
+        }
+
+        public void Clear()
+        {
+            for(int i = 0; i < Children.Count; i++)
+            {
+                Children.RemoveAt(i);
+            }
         }
     }
 }
