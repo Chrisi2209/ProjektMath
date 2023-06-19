@@ -1991,4 +1991,89 @@ namespace Simon
             return ergebnis;
         }
     }
+
+    static public class S
+    {
+        static public int Factorial(int input)
+        {
+            if (input < 0) throw new ArgumentOutOfRangeException();
+            int output = 1;
+            while (1 < input) output *= input--;
+            return output;
+        }
+        static public uint Factorial(uint input)
+        {
+            uint output = 1;
+            while (1 < input) output *= input--;
+            return output;
+        }
+        static public long Factorial(long input)
+        {
+            if (input < 0) throw new ArgumentOutOfRangeException();
+            long output = 1;
+            while (1 < input) output *= input--;
+            return output;
+        }
+        static public ulong Factorial(ulong input)
+        {
+            ulong output = 1;
+            while (1 < input) output *= input--;
+            return output;
+        }
+        static public double BigFactorial(int input)
+        {
+            if (input < 0) throw new ArgumentOutOfRangeException();
+            double output = 1;
+            while (1 < input) output *= input--;
+            return output;
+        }
+        static public double BigFactorial(uint input)
+        {
+            double output = 1;
+            while (1 < input) output *= input--;
+            return output;
+        }
+
+        static public int nPr(int a, uint b)
+        {
+            if (0 <= a && a < b) return 0;
+            int output = 1;
+            while (0 < b--) output *= a--;
+            return output;
+        }
+        static public uint nPr(uint a, uint b)
+        {
+            if (a < b) return 0;
+            uint output = 1;
+            while (0 < b--) output *= a--;
+            return output;
+        }
+        static public long nPr(long a, ulong b)
+        {
+            if (0 <= a && (ulong)a < b) return 0;
+            long output = 1;
+            while (0 < b--) output *= a--;
+            return output;
+        }
+        static public ulong nPr(ulong a, ulong b)
+        {
+            if (a < b) return 0;
+            ulong output = 1;
+            while (0 < b--) output *= a--;
+            return output;
+        }
+        static public double nPr(double a, int b)
+        {
+            double output = 1;
+            if (0 <= b) while (0 < b--) output *= a--;
+            else while (b++ < 0) output /= ++a;
+            return output;
+        }
+        static public double nPr(double a, uint b)
+        {
+            double output = 1;
+            while (0 < b--) output *= a--;
+            return output;
+        }
+    }
 }

@@ -147,7 +147,6 @@ namespace Projekt_M_TestProgramm
             return expression;
         }
         
-
         public virtual ExtendedDockPanel CreateUI()
         {
             // Initialises the Dockpanel for this object
@@ -631,7 +630,7 @@ namespace Projekt_M_TestProgramm
                             if (index != input.Length && input[index] == '(')
                             {
                                 index++;
-                                Funktion.GoOutOfBracket(input, ref index);
+                                Function.GoOutOfBracket(input, ref index);
                             }
                             break;
                         }
@@ -674,7 +673,7 @@ namespace Projekt_M_TestProgramm
                             if (index != input.Length && input[index] == '(')
                             {
                                 index++;
-                                Funktion.GoOutOfBracket(input, ref index);
+                                Function.GoOutOfBracket(input, ref index);
                             }
                             break;
                         }
@@ -705,7 +704,7 @@ namespace Projekt_M_TestProgramm
             {
                 case '(':
                     {
-                        Funktion.GoOutOfBracket(input, ref index);
+                        Function.GoOutOfBracket(input, ref index);
                         break;
                     }
                 case char c when Number.IsDigit(c):
@@ -719,7 +718,7 @@ namespace Projekt_M_TestProgramm
                         if (index!=input.Length&&input[index]=='(')
                         {
                             index++;
-                            Funktion.GoOutOfBracket(input, ref index);
+                            Function.GoOutOfBracket(input, ref index);
                         }
                         break;
                     }
@@ -733,7 +732,7 @@ namespace Projekt_M_TestProgramm
                 {
                     case '(':
                         {
-                            Funktion.GoOutOfBracket(input, ref index);
+                            Function.GoOutOfBracket(input, ref index);
                             break;
                         }
                     case char c when Number.IsDigit(c):
@@ -747,7 +746,7 @@ namespace Projekt_M_TestProgramm
                             if (index != input.Length && input[index] == '(')
                             {
                                 index++;
-                                Funktion.GoOutOfBracket(input, ref index);
+                                Function.GoOutOfBracket(input, ref index);
                             }
                             break;
                         }
@@ -796,7 +795,7 @@ namespace Projekt_M_TestProgramm
                         }
                     case '(':
                         {
-                            Funktion.GoOutOfBracket(input, ref index);
+                            Function.GoOutOfBracket(input, ref index);
                             if (index < 0) throw new ArgumentOutOfRangeException();
                             break;
                         }
@@ -840,7 +839,7 @@ namespace Projekt_M_TestProgramm
                         }
                     case '(':
                         {
-                            Funktion.GoOutOfBracket(input, ref index);
+                            Function.GoOutOfBracket(input, ref index);
                             if (index < 0) throw new ArgumentOutOfRangeException();
                             break;
                         }
