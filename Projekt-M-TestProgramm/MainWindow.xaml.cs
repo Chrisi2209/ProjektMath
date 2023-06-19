@@ -281,14 +281,17 @@ namespace Projekt_M_TestProgramm
         static public DoubleExpression Create(string input)
         {
             DoubleExpression doubleExpression;
+            string nextInputA, nextInputB;
             while (true)
             {
-                doubleExpression = Fraction.Create(input);
+                doubleExpression = Fraction.Create(input, out nextInputA, out nextInputB);
                 if (doubleExpression != null) break;
-                doubleExpression = Power.Create(input);
+                doubleExpression = Power.Create(input, out nextInputA, out nextInputB);
                 if (doubleExpression != null) break;
                 return null;
             }
+            doubleExpression.ExpressionA = Expression.Create(nextInputA, doubleExpression);
+            doubleExpression.ExpressionB = Expression.Create(nextInputB, doubleExpression);
             return doubleExpression;
         }
     }
@@ -308,18 +311,26 @@ namespace Projekt_M_TestProgramm
 
         static public RepeatedExpression Create(string input)
         {
-            RepeatedExpression repetedExpression;
+            RepeatedExpression repeatedExpression;
+            BinArray<string> nextInputs;
+            
             while (true)
             {
-                repetedExpression = Sum.Create(input);
-                if (repetedExpression != null) break;
-                repetedExpression = Product.Create(input);
-                if (repetedExpression != null) break;
+                repeatedExpression = Sum.Create(input, out nextInputs);
+                if (repeatedExpression != null) break;
+                repeatedExpression = Product.Create(input, out nextInputs);
+                if (repeatedExpression != null) break;
                 return null;
             }
-            return repetedExpression;
+            repeatedExpression.Expressions = new BinArray<Expression>(nextInputs.Length);
+            for (int i = 0; i < nextInputs.Length; i++)
+            {
+                repeatedExpression.Expressions[i] = Expression.Create(input, repeatedExpression);
+            }
+            return repeatedExpression;
         }
     }
+
 
     public class EmptyExpression : NullExpression
     {
@@ -415,8 +426,8 @@ namespace Projekt_M_TestProgramm
             OperationPart operationPart = new OperationPart();
             nextInput = null;
             if (input.Length == 0) return null;
-            int index = 1;
-            switch (input[0])
+            int index = 0;
+            switch (input[index++])
             {
                 case '+':
                 case '-':
@@ -498,11 +509,11 @@ namespace Projekt_M_TestProgramm
             Function funktion = new Function();
             nextInput = null;
             if (input.Length < 2) return null;
-            switch (input[0])
+            int index = 0;
+            switch (input[index++])
             {
                 case '(':
                     {
-                        int index = 1;
                         GoOutOfBracket(input, ref index);
                         if (index < 0) throw new ArgumentOutOfRangeException();
                         if (index < input.Length) return null;
@@ -511,7 +522,6 @@ namespace Projekt_M_TestProgramm
                     }
                 case char c when Variable.IsLetter(c):
                     {
-                        int index = 1;
                         Variable.GoBehindVariable(input, ref index);
                         if (index == input.Length || input[index++] != '(') return null;
                         funktion.Name = input.Remove(index - 1);
@@ -618,6 +628,11 @@ namespace Projekt_M_TestProgramm
                     case char c when Variable.IsLetter(c):
                         {
                             Variable.GoBehindVariable(input, ref index);
+                            if (index != input.Length && input[index] == '(')
+                            {
+                                index++;
+                                Funktion.GoOutOfBracket(input, ref index);
+                            }
                             break;
                         }
                     default: return null;
@@ -626,7 +641,11 @@ namespace Projekt_M_TestProgramm
                 switch (input[index])
                 {
                     case '/': break;
-                    case '^': continue;
+                    case '^':
+                        {
+                            index++;
+                            continue;
+                        }
                     default: return null;
                 }
                 break;
@@ -652,6 +671,11 @@ namespace Projekt_M_TestProgramm
                     case char c when Variable.IsLetter(c):
                         {
                             Variable.GoBehindVariable(input, ref index);
+                            if (index != input.Length && input[index] == '(')
+                            {
+                                index++;
+                                Funktion.GoOutOfBracket(input, ref index);
+                            }
                             break;
                         }
                     default: return null;
@@ -671,9 +695,71 @@ namespace Projekt_M_TestProgramm
 
     public class Power : DoubleExpression
     {
-        static public new Power Create(string input )
+        static public Power Create(string input, out string nextInputA, out string nextInputB)
         {
-            return null;
+            Power power = new Power();
+            nextInputA = null;
+            nextInputB = null;
+            int index = 0;
+            switch (input[index++])
+            {
+                case '(':
+                    {
+                        Funktion.GoOutOfBracket(input, ref index);
+                        break;
+                    }
+                case char c when Number.IsDigit(c):
+                    {
+                        Number.GoBehindNumber(input, ref index);
+                        break;
+                    }
+                case char c when Variable.IsLetter(c):
+                    {
+                        Variable.GoBehindVariable(input, ref index);
+                        if (index!=input.Length&&input[index]=='(')
+                        {
+                            index++;
+                            Funktion.GoOutOfBracket(input, ref index);
+                        }
+                        break;
+                    }
+            }
+            nextInputA = input.Remove(index);
+            if (index == input.Length || input[index++] != '^') return null;
+            nextInputB = input.Substring(index);
+            while (true)
+            {
+                switch (input[index++])
+                {
+                    case '(':
+                        {
+                            Funktion.GoOutOfBracket(input, ref index);
+                            break;
+                        }
+                    case char c when Number.IsDigit(c):
+                        {
+                            Number.GoBehindNumber(input, ref index);
+                            break;
+                        }
+                    case char c when Variable.IsLetter(c):
+                        {
+                            Variable.GoBehindVariable(input, ref index);
+                            if (index != input.Length && input[index] == '(')
+                            {
+                                index++;
+                                Funktion.GoOutOfBracket(input, ref index);
+                            }
+                            break;
+                        }
+                }
+                if (index != input.Length)
+                {
+                    if (input[index++] == '^') continue;
+                    return null;
+                }
+                break;
+            }
+            return power;
         }
 
         public override string ToString()
@@ -684,14 +770,42 @@ namespace Projekt_M_TestProgramm
 
     public class Sum : RepeatedExpression
     {
-        /*
+         /*
          * Only for specific methods that are only possible with sums.
          * Here to group additions AND SUBTRACTIONS together
          * THE SUM DOES NOT ADD THE + AND - SIGNS, FUNCTION IS RESPONSIBLE FOR THIS!!!!
          */
-        static public new Sum Create(string input)
+        static public Sum Create(string input, out BinArray<string> nextInputs)
         {
-            return null;
+            Sum sum = new Sum();
+            nextInputs = new BinArray<string>(0);
+            int index = 0;
+            if (input.Length == 0) return null;
+            if (input[index] == '+' || input[index] == '-') index++;
+            while (index < input.Length)
+            {
+                switch (input[index++])
+                {
+                    case '+':
+                    case '-':
+                        {
+                            nextInputs.Append(input.Remove(--index));
+                            input = input.Substring(index);
+                            index = 1;
+                            break;
+                        }
+                    case '(':
+                        {
+                            Funktion.GoOutOfBracket(input, ref index);
+                            if (index < 0) throw new ArgumentOutOfRangeException();
+                            break;
+                        }
+                    default: break;
+                }
+            }
+            nextInputs.Append(input);
+            if (nextInputs.Length < 2) return null;
+            return sum;
         }
 
         public override string ToString()
@@ -706,9 +820,36 @@ namespace Projekt_M_TestProgramm
 
     public class Product : RepeatedExpression
     {
-        static public new Product Create(string input)
+        static public Product Create(string input, out BinArray<string> nextInputs)
         {
-            return null;
+            Product product = new Product();
+            nextInputs = new BinArray<string>(0);
+            int index = 0;
+            while (index < input.Length)
+            {
+                switch (input[index++])
+                {
+                    case '+':
+                    case '-': return null;
+                    case '*':
+                        {
+                            nextInputs.Append(input.Remove(--index));
+                            input = input.Substring(index);
+                            index = 1;
+                            break;
+                        }
+                    case '(':
+                        {
+                            Funktion.GoOutOfBracket(input, ref index);
+                            if (index < 0) throw new ArgumentOutOfRangeException();
+                            break;
+                        }
+                    default: break;
+                }
+            }
+            nextInputs.Append(input);
+            if (nextInputs.Length < 2) return null;
+            return product;
         }
 
         public override string ToString()

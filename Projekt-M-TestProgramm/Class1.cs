@@ -1279,8 +1279,8 @@ namespace Simon
 
     public class BinArray<T>
     {
-        private T[] werte;
-        private int anzahl;
+        private T[] array;
+        private int length;
 
 
         /// <summary>
@@ -1290,22 +1290,22 @@ namespace Simon
         {
             get
             {
-                return anzahl;
+                return length;
             }
             private set
             {
-                anzahl = 0 <= value ? value : 0;
+                length = 0 <= value ? value : 0;
             }
         }
 
         /// <summary>
         /// Gibt die Länge des Arrays an.
         /// </summary>
-        public int BinAnzahl
+        public int BinLength
         {
             get
             {
-                return werte.Length;
+                return array.Length;
             }
         }
 
@@ -1314,12 +1314,12 @@ namespace Simon
             get
             {
                 if (index < 0 || Length <= index) throw new IndexOutOfRangeException();
-                return werte[index];
+                return array[index];
             }
             set
             {
                 if (index < 0 || Length <= index) throw new IndexOutOfRangeException();
-                werte[index] = value;
+                array[index] = value;
             }
         }
 
@@ -1330,17 +1330,17 @@ namespace Simon
         /// </summary>
         public BinArray()
         {
-            werte = new T[2];
+            array = new T[2];
         }
 
         /// <summary>
-        /// Erstellt ein BinArray mit der länge 'länge'.
+        /// Erstellt ein BinArray mit der länge <paramref name="length"/>.
         /// </summary>
-        /// <param name="länge">gibt die länge des Arrays an</param>
-        public BinArray(int länge)
+        /// <param name="length">gibt die länge des Arrays an</param>
+        public BinArray(int length)
         {
-            werte = new T[NextBin(länge)];
-            Length = länge;
+            array = new T[NextBin(length)];
+            Length = length;
         }
 
         /// <summary>
@@ -1350,94 +1350,94 @@ namespace Simon
         public BinArray(params T[] array)
         {
             Length = array.Length;
-            werte = new T[NextBin(Length)];
-            Array.Copy(array, werte, Length);
+            this.array = new T[NextBin(Length)];
+            Array.Copy(array, this.array, Length);
         }
 
 
 
         /// <summary>
-        /// gibt die kleinste 2erPotzenz die größer als 'zahl' ist zurück. 
+        /// gibt die kleinste 2erPotzenz die größer als <paramref name="number"/> ist zurück. 
         /// </summary>
-        /// <param name="zahl"></param>
+        /// <param name="number"></param>
         /// <returns></returns>
-        static public int NextBin(int zahl)
+        static public int NextBin(int number)
         {
-            if (zahl <= 0) return 1;
-            return 1 << Convert.ToString(zahl, 2).Length;
+            if (number <= 0) return 1;
+            return 1 << Convert.ToString(number, 2).Length;
         }
 
 
         /// <summary>
-        /// Fügt den Wert 'wert' ans BinArray hinten an. 
+        /// Fügt den Wert <paramref name="value"/> ans BinArray hinten an. 
         /// </summary>
-        /// <param name="wert"></param>
-        public void Append(T wert)
+        /// <param name="value"></param>
+        public void Append(T value)
         {
-            if (werte.Length == Length) Array.Resize(ref werte, Length * 2);
-            werte[Length++] = wert;
+            if (array.Length == Length) Array.Resize(ref array, Length * 2);
+            array[Length++] = value;
         }
 
         /// <summary>
-        /// Fügt alle Werte von 'array' ans BinArray hinten an. 
+        /// Fügt alle Werte von <paramref name="array"/> ans BinArray hinten an. 
         /// </summary>
         /// <param name="array"></param>
         public void Append(params T[] array)
         {
             Length += array.Length;
-            if (werte.Length < Length) Array.Resize(ref werte, NextBin(Length));
-            Array.Copy(array, 0, werte, Length - array.Length, array.Length);
+            if (this.array.Length < Length) Array.Resize(ref this.array, NextBin(Length));
+            Array.Copy(array, 0, this.array, Length - array.Length, array.Length);
         }
 
         /// <summary>
-        /// Fügt alle Werte von 'bArray' ans BinArray hinten an. 
+        /// Fügt alle Werte von <paramref name="binArray"/> ans BinArray hinten an. 
         /// </summary>
-        /// <param name="bArray"></param>
-        public void Append(BinArray<T> bArray)
+        /// <param name="binArray"></param>
+        public void Append(BinArray<T> binArray)
         {
-            Length += bArray.Length;
-            if (werte.Length < Length) Array.Resize(ref werte, NextBin(Length));
-            Array.Copy(bArray.werte, 0, werte, Length - bArray.Length, bArray.Length);
+            Length += binArray.Length;
+            if (array.Length < Length) Array.Resize(ref array, NextBin(Length));
+            Array.Copy(binArray.array, 0, array, Length - binArray.Length, binArray.Length);
         }
 
 
         /// <summary>
-        /// Fügt 'wert' an der Stelle 'stelle' ins BinArray ein.
+        /// Fügt <paramref name="value"/> an der Stelle <paramref name="index"/> ins BinArray ein.
         /// </summary>
-        /// <param name="stelle">Darf einen Wert von 0 bis 'Anzahl' haben.</param>
-        /// <param name="wert">BinArray[stelle] == wert</param>
-        public void Insert(int stelle, T wert)
+        /// <param name="index">Darf einen Wert von 0 bis 'Anzahl' haben.</param>
+        /// <param name="value">BinArray[stelle] == wert</param>
+        public void Insert(int index, T value)
         {
-            if (stelle < 0 || Length < stelle) throw new IndexOutOfRangeException();
-            if (Length == werte.Length) Array.Resize(ref werte, Length * 2);
-            Array.Copy(werte, stelle, werte, stelle + 1, Length++ - stelle);
-            werte[stelle] = wert;
+            if (index < 0 || Length < index) throw new IndexOutOfRangeException();
+            if (Length == array.Length) Array.Resize(ref array, Length * 2);
+            Array.Copy(array, index, array, index + 1, Length++ - index);
+            array[index] = value;
         }
 
         /// <summary>
-        /// Fügt die Werte von 'array' an der der Stelle 'stelle' ein. 
+        /// Fügt die Werte von <paramref name="array"/> an der der Stelle <paramref name="index"/> ein. 
         /// </summary>
-        /// <param name="stelle">Kann den Wert von 0 bis 'Anzahl' haben.</param>
+        /// <param name="index">Kann den Wert von 0 bis 'Anzahl' haben.</param>
         /// <param name="array">BinArray[stelle] == array[0]</param>
-        public void Insert(int stelle, params T[] array)
+        public void Insert(int index, params T[] array)
         {
             Length += array.Length;
-            if (werte.Length < Length) Array.Resize(ref werte, NextBin(Length));
-            Array.Copy(werte, stelle, werte, stelle + array.Length, Length - array.Length - stelle);
-            Array.Copy(array, 0, werte, stelle, array.Length);
+            if (this.array.Length < Length) Array.Resize(ref this.array, NextBin(Length));
+            Array.Copy(this.array, index, this.array, index + array.Length, Length - array.Length - index);
+            Array.Copy(array, 0, this.array, index, array.Length);
         }
 
         /// <summary>
-        /// Fügt die Werte von 'bArray' an der Stelle 'stelle' ein. 
+        /// Fügt die Werte von <paramref name="binArray"/> an der Stelle <paramref name="index"/> ein. 
         /// </summary>
-        /// <param name="stelle">Kann den Wert von 0 bis 'Anzahl' haben.</param>
-        /// <param name="bArray">BinArray[stelle] == bArray[0]</param>
-        public void Insert(int stelle, BinArray<T> bArray)
+        /// <param name="index">Kann den Wert von 0 bis 'Anzahl' haben.</param>
+        /// <param name="binArray">BinArray[stelle] == bArray[0]</param>
+        public void Insert(int index, BinArray<T> binArray)
         {
-            Length += bArray.Length;
-            if (werte.Length < Length) Array.Resize(ref werte, NextBin(Length));
-            Array.Copy(werte, stelle, werte, stelle + bArray.Length, Length - bArray.Length - stelle);
-            Array.Copy(bArray.werte, 0, werte, stelle, bArray.Length);
+            Length += binArray.Length;
+            if (array.Length < Length) Array.Resize(ref array, NextBin(Length));
+            Array.Copy(array, index, array, index + binArray.Length, Length - binArray.Length - index);
+            Array.Copy(binArray.array, 0, array, index, binArray.Length);
         }
 
 
@@ -1446,39 +1446,39 @@ namespace Simon
         /// </summary>
         public void RemoveFirst()
         {
-            Array.Copy(werte, 1, werte, 0, --Length);
+            Array.Copy(array, 1, array, 0, --Length);
         }
 
         /// <summary>
-        /// Entfernt die ersten <anzahl> Werte. 
+        /// Entfernt die ersten <paramref name="length"/> Werte. 
         /// </summary>
-        /// <param name="anzahl"></param>
-        public void RemoveFirst(int anzahl)
+        /// <param name="length"></param>
+        public void RemoveFirst(int length)
         {
-            Length -= anzahl;
-            Array.Copy(werte, anzahl, werte, 0, Length);
+            Length -= length;
+            Array.Copy(array, length, array, 0, Length);
         }
 
         /// <summary>
-        /// Entfernt den Wert an der Stelle 'stelle'.
+        /// Entfernt den Wert an der Stelle <paramref name="index"/>.
         /// </summary>
-        /// <param name="stelle">Kann den Wert von 0 bis 'Anzahl'-1 haben.</param>
-        public void Remove(int stelle)
+        /// <param name="index">Kann den Wert von 0 bis 'Anzahl'-1 haben.</param>
+        public void Remove(int index)
         {
-            if (stelle < 0 || Length <= stelle) throw new ArgumentOutOfRangeException();
-            Array.Copy(werte, stelle + 1, werte, stelle, --Length - stelle);
+            if (index < 0 || Length <= index) throw new ArgumentOutOfRangeException();
+            Array.Copy(array, index + 1, array, index, --Length - index);
         }
 
         /// <summary>
-        /// Entfernt 'länge' Werte vom BinArray, begonnen bei 'stelle'.
+        /// Entfernt <paramref name="length"/> Werte vom BinArray, begonnen bei <paramref name="index"/>.
         /// </summary>
         /// <param name="index">Kann einen Wert von 0 bis 'Anzahl'-'länge' haben.</param>
-        /// <param name="länge">Gibt an wie viele Werte vom BinArray entfernt wereden.</param>
-        public void Remove(int index, int länge)
+        /// <param name="length">Gibt an wie viele Werte vom BinArray entfernt wereden.</param>
+        public void Remove(int index, int length)
         {
-            if (index < 0 || länge < 0 || Length < index + länge) throw new ArgumentOutOfRangeException();
-            Length -= länge;
-            Array.Copy(werte, index + länge, werte, index, Length - index);
+            if (index < 0 || length < 0 || Length < index + length) throw new ArgumentOutOfRangeException();
+            Length -= length;
+            Array.Copy(array, index + length, array, index, Length - index);
         }
 
         /// <summary>
@@ -1490,12 +1490,12 @@ namespace Simon
         }
 
         /// <summary>
-        /// Entfernt die letzten 'anzahl' werte des Arrays. 
+        /// Entfernt die letzten <paramref name="length"/> werte des Arrays. 
         /// </summary>
-        /// <param name="anzahl"></param>
-        public void RemoveLast(int anzahl)
+        /// <param name="length"></param>
+        public void RemoveLast(int length)
         {
-            Length -= anzahl;
+            Length -= length;
         }
 
         /// <summary>
@@ -1504,9 +1504,9 @@ namespace Simon
         /// <returns></returns>
         public T PopFirst()
         {
-            T wert = this[0];
-            Array.Copy(werte, 1, werte, 0, --Length);
-            return wert;
+            T temp = this[0];
+            Array.Copy(array, 1, array, 0, --Length);
+            return temp;
         }
 
         /// <summary>
@@ -1515,7 +1515,7 @@ namespace Simon
         /// <returns></returns>
         public T PopLast()
         {
-            return werte[--Length];
+            return array[--Length];
         }
 
 
@@ -1524,7 +1524,7 @@ namespace Simon
         /// </summary>
         public void Reverse()
         {
-            Array.Reverse(werte, 0, Length);
+            Array.Reverse(array, 0, Length);
         }
 
         /// <summary>
@@ -1535,7 +1535,7 @@ namespace Simon
         public void Reverse(int index, int length)
         {
             if (Length < index + length) throw new ArgumentOutOfRangeException();
-            Array.Reverse(werte, index, length);
+            Array.Reverse(array, index, length);
         }
 
 
@@ -1545,16 +1545,16 @@ namespace Simon
         /// </summary>
         public void UpdateArraySize()
         {
-            Array.Resize(ref werte, NextBin(Length));
+            Array.Resize(ref array, NextBin(Length));
         }
 
         /// <summary>
         /// Löscht das BinArray. 
         /// </summary>
-        /// <param name="arrayZurücksetzten">Gibt an, ob das Array auch gelöscht werden soll.</param>
-        public void Clear(bool arrayZurücksetzten = false)
+        /// <param name="clearBaseArray">Gibt an, ob das Array auch gelöscht werden soll.</param>
+        public void Clear(bool clearBaseArray = false)
         {
-            if (arrayZurücksetzten) werte = new T[1];
+            if (clearBaseArray) array = new T[1];
             Length = 0;
         }
 
@@ -1563,7 +1563,7 @@ namespace Simon
         /// </summary>
         public void GetAccessToArray()
         {
-            Length = werte.Length;
+            Length = array.Length;
         }
 
 
@@ -1579,7 +1579,7 @@ namespace Simon
         }
 
         /// <summary>
-        /// Kopiert die Werte von 'source' in 'destination'. 
+        /// Kopiert die Werte von <paramref name="source"/> in <paramref name="destination"/>. 
         /// </summary>
         /// <param name="source"></param>
         /// <param name="destination"></param>
@@ -1590,13 +1590,13 @@ namespace Simon
             if (destination.Length < length)
             {
                 destination.Length = length;
-                if (destination.werte.Length < destination.Length) Array.Resize(ref destination.werte, NextBin(destination.Length));
+                if (destination.array.Length < destination.Length) Array.Resize(ref destination.array, NextBin(destination.Length));
             }
-            Array.Copy(source.werte, destination.werte, length);
+            Array.Copy(source.array, destination.array, length);
         }
 
         /// <summary>
-        /// Kopiert die Werte von 'source' in 'destination'. 
+        /// Kopiert die Werte von <paramref name="source"/> in <paramref name="destination"/>. 
         /// </summary>
         /// <param name="source"></param>
         /// <param name="destination"></param>
@@ -1607,13 +1607,13 @@ namespace Simon
             if (destination.Length < length)
             {
                 destination.Length = length;
-                if (destination.werte.Length < destination.Length) Array.Resize(ref destination.werte, NextBin(destination.Length));
+                if (destination.array.Length < destination.Length) Array.Resize(ref destination.array, NextBin(destination.Length));
             }
-            Array.Copy(source, destination.werte, length);
+            Array.Copy(source, destination.array, length);
         }
 
         /// <summary>
-        /// Kopiert die Werte von 'source' in 'destination'. 
+        /// Kopiert die Werte von <paramref name="source"/> in <paramref name="destination"/>. 
         /// </summary>
         /// <param name="source"></param>
         /// <param name="sourceIndex">Gibt an von wo die Datenkopierung gebinnen soll.</param>
@@ -1627,13 +1627,13 @@ namespace Simon
             if (destination.Length < destinationIndex + length)
             {
                 destination.Length = destinationIndex + length;
-                if (destination.werte.Length < destination.Length) Array.Resize(ref destination.werte, NextBin(destination.Length));
+                if (destination.array.Length < destination.Length) Array.Resize(ref destination.array, NextBin(destination.Length));
             }
-            Array.Copy(source.werte, sourceIndex, destination.werte, destinationIndex, length);
+            Array.Copy(source.array, sourceIndex, destination.array, destinationIndex, length);
         }
 
         /// <summary>
-        /// Kopiert die Werte von 'source' in 'destination'. 
+        /// Kopiert die Werte von <paramref name="source"/> in <paramref name="destination"/>. 
         /// </summary>
         /// <param name="source"></param>
         /// <param name="sourceIndex">Gibt an von wo die Datenkopierung gebinnen soll.</param>
@@ -1647,31 +1647,31 @@ namespace Simon
             if (destination.Length < destinationIndex + length)
             {
                 destination.Length = destinationIndex + length;
-                if (destination.werte.Length < destination.Length) Array.Resize(ref destination.werte, NextBin(destination.Length));
+                if (destination.array.Length < destination.Length) Array.Resize(ref destination.array, NextBin(destination.Length));
             }
-            Array.Copy(source, sourceIndex, destination.werte, destinationIndex, length);
+            Array.Copy(source, sourceIndex, destination.array, destinationIndex, length);
         }
 
 
         /// <summary>
-        /// Gibt den ersten index zurück, bei dem gilt: BinArray['i'] = 'wert'
+        /// Gibt den ersten index zurück, bei dem gilt: BinArray['i'] = <paramref name="value"/>
         /// </summary>
-        /// <param name="wert"></param>
+        /// <param name="value"></param>
         /// <returns>'i'</returns>
-        public int IndexOf(T wert)
+        public int IndexOf(T value)
         {
-            for (int i = 0; i < Length; i++) if (wert.Equals(this[i])) return i;
+            for (int i = 0; i < Length; i++) if (value.Equals(this[i])) return i;
             return -1;
         }
 
         /// <summary>
-        /// Gibt den letzten Index zurück bei dem gilt: BinArray['i'] = 'wert'
+        /// Gibt den letzten Index zurück bei dem gilt: BinArray['i'] = <paramref name="value"/>
         /// </summary>
-        /// <param name="wert"></param>
+        /// <param name="value"></param>
         /// <returns>'i'</returns>
-        public int LastIndexOf(T wert)
+        public int LastIndexOf(T value)
         {
-            return Array.IndexOf(werte, wert);
+            return Array.IndexOf(array, value);
         }
 
 
