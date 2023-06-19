@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Projekt_M_TestProgramm"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="ProjectMath" Height="450" Width="800"
         Background="#343541" Loaded="Window_Loaded">
     <!--0x 353535 (dunkel grau)-->
     <!--0x 343541 (dunkel grau sehr leichter BlauTon)-->
     
     <Grid>
-		<Label x:Name="TestLabel"></Label>
+        <Label x:Name="TestLabel"></Label>
 		<!--
 		<Grid>
 			<Border BorderBrush="Red" BorderThickness="2">
@@ -23,10 +23,25 @@
 		        </DockPanel>
             </Border>
 		</Grid> -->
-        <ScrollViewer  FontSize="42" FontStyle="Italic" Foreground="White" KeyDown="ScrollViewer_KeyDown" PreviewTextInput="ScrollViewer_PreviewTextInput">
-			<local:ExtendedDockPanel x:Name="EquationHistory" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            
+
+            <DockPanel Grid.Column="0">
+                <Button Height="50" Click="Button_Click">Klick mich!</Button>
+            </DockPanel>
+
+            <ScrollViewer Grid.Column="1" FontSize="42" FontStyle="Italic" Foreground="White" PreviewTextInput="ScrollViewer_PreviewTextInput">
+			    <local:ExtendedDockPanel x:Name="EquationHistory" HorizontalAlignment="Center" VerticalAlignment="Center">
 				
-			</local:ExtendedDockPanel>
-        </ScrollViewer>
+			    </local:ExtendedDockPanel>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Window>

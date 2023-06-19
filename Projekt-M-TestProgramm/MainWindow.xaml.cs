@@ -24,6 +24,7 @@ namespace Projekt_M_TestProgramm
         public MainWindow()
         {
             InitializeComponent();
+            KeyDown += ScrollViewer_KeyDown;
             /*
             Sum summe = new Sum();
             summe.Expressions = new BinArray<Expression>(4);
@@ -108,6 +109,7 @@ namespace Projekt_M_TestProgramm
                 TestLabel.Content = 1;
             }
 
+
             if (e.Key == Key.Oem5)
             {
                 AddInput('^');
@@ -115,11 +117,12 @@ namespace Projekt_M_TestProgramm
             }
             else if (e.Key == Key.Left)
             {
-
+                TestLabel.Content = 100000000;
                 AddInput(Convert.ToChar(1));
             }
             else if (e.Key == Key.Right)
             {
+                TestLabel.Content = 200000000;
                 AddInput(Convert.ToChar(2));
             }
         }
@@ -162,7 +165,13 @@ namespace Projekt_M_TestProgramm
             {
                 inputString = inputString.Insert(cursorPosition++, "" + newChar);  // "" + newChar to convert into string
             }
+            EquationHistory.Clear();
             EquationHistory.DockAt(new ExtendedLabel(inputString), Dock.Top);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            TestLabel.Content = "abcdefg";
         }
     }
 
@@ -891,6 +900,14 @@ namespace Projekt_M_TestProgramm
         {
             // Sometimes, some distance makes us happy
             Margin = new Thickness(5, 0, 5, 0);
+        }
+
+        public void Clear()
+        {
+            for(int i = 0; i < Children.Count; i++)
+            {
+                Children.RemoveAt(i);
+            }
         }
     }
 }
