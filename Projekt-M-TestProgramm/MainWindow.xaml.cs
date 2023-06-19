@@ -80,13 +80,14 @@ namespace Projekt_M_TestProgramm
             (((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Operation = '+';
             (((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Expression = new Number();
             ((((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Expression as Number).Num = 5;
-
+            */
             
+            Expression summe = Expression.Create("1+1/1");
             summe.CreateUI();
             EquationHistory.DockAt(summe.DockPanel, Dock.Top);
             
-            TestLabel.Content = summe[3].DockPanel.Width;
-            */
+            // TestLabel.Content = summe[3].DockPanel.Width;
+            
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -406,7 +407,7 @@ namespace Projekt_M_TestProgramm
             repeatedExpression.Expressions = new BinArray<Expression>(nextInputs.Length);
             for (int i = 0; i < nextInputs.Length; i++)
             {
-                repeatedExpression.Expressions[i] = Expression.Create(input, repeatedExpression);
+                repeatedExpression.Expressions[i] = Expression.Create(nextInputs[i], repeatedExpression);
             }
             return repeatedExpression;
         }
@@ -734,7 +735,7 @@ namespace Projekt_M_TestProgramm
                             if (index != input.Length && input[index] == '(')
                             {
                                 index++;
-                                Funktion.GoOutOfBracket(input, ref index);
+                                Function.GoOutOfBracket(input, ref index);
                             }
                             break;
                         }
@@ -777,7 +778,7 @@ namespace Projekt_M_TestProgramm
                             if (index != input.Length && input[index] == '(')
                             {
                                 index++;
-                                Funktion.GoOutOfBracket(input, ref index);
+                                Function.GoOutOfBracket(input, ref index);
                             }
                             break;
                         }
@@ -808,7 +809,7 @@ namespace Projekt_M_TestProgramm
             {
                 case '(':
                     {
-                        Funktion.GoOutOfBracket(input, ref index);
+                        Function.GoOutOfBracket(input, ref index);
                         break;
                     }
                 case char c when Number.IsDigit(c):
@@ -822,7 +823,7 @@ namespace Projekt_M_TestProgramm
                         if (index!=input.Length&&input[index]=='(')
                         {
                             index++;
-                            Funktion.GoOutOfBracket(input, ref index);
+                            Function.GoOutOfBracket(input, ref index);
                         }
                         break;
                     }
@@ -836,7 +837,7 @@ namespace Projekt_M_TestProgramm
                 {
                     case '(':
                         {
-                            Funktion.GoOutOfBracket(input, ref index);
+                            Function.GoOutOfBracket(input, ref index);
                             break;
                         }
                     case char c when Number.IsDigit(c):
@@ -850,7 +851,7 @@ namespace Projekt_M_TestProgramm
                             if (index != input.Length && input[index] == '(')
                             {
                                 index++;
-                                Funktion.GoOutOfBracket(input, ref index);
+                                Function.GoOutOfBracket(input, ref index);
                             }
                             break;
                         }
@@ -899,7 +900,7 @@ namespace Projekt_M_TestProgramm
                         }
                     case '(':
                         {
-                            Funktion.GoOutOfBracket(input, ref index);
+                            Function.GoOutOfBracket(input, ref index);
                             if (index < 0) throw new ArgumentOutOfRangeException();
                             break;
                         }
@@ -943,7 +944,7 @@ namespace Projekt_M_TestProgramm
                         }
                     case '(':
                         {
-                            Funktion.GoOutOfBracket(input, ref index);
+                            Function.GoOutOfBracket(input, ref index);
                             if (index < 0) throw new ArgumentOutOfRangeException();
                             break;
                         }
