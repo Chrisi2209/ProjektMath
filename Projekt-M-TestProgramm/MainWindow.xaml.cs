@@ -82,7 +82,7 @@ namespace Projekt_M_TestProgramm
             ((((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Expression as Number).Num = 5;
             */
             
-            Expression summe = Expression.Create("1+1/1");
+            Expression summe = Expression.Create("(1+1)/1");
             summe.CreateUI();
             EquationHistory.DockAt(summe.DockPanel, Dock.Top);
             
@@ -167,7 +167,8 @@ namespace Projekt_M_TestProgramm
                 inputString = inputString.Insert(cursorPosition++, "" + newChar);  // "" + newChar to convert into string
             }
             EquationHistory.Clear();
-            EquationHistory.DockAt(new ExtendedLabel(inputString), Dock.Top);
+
+            EquationHistory.DockAt(Expression.Create(inputString).CreateUI(), Dock.Top);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -181,7 +182,7 @@ namespace Projekt_M_TestProgramm
     public class Expression
     {
         // its own UI element
-        protected ExtendedDockPanel dockPanel;
+        private ExtendedDockPanel dockPanel;
         public ExtendedDockPanel DockPanel {
             get {return dockPanel;} 
             protected set {dockPanel = value;}
@@ -278,9 +279,9 @@ namespace Projekt_M_TestProgramm
 
         public ExtendedDockPanel CreateLabelUI(string name)
         {
-            dockPanel = new ExtendedDockPanel(Dock.Left, new ExtendedLabel(name));
+            DockPanel = new ExtendedDockPanel(Dock.Left, new ExtendedLabel(name));
 
-            return dockPanel;
+            return DockPanel;
         }
 
 
