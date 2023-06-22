@@ -82,7 +82,7 @@ namespace Projekt_M_TestProgramm
             ((((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Expression as Number).Num = 5;
             */
             
-            Expression summe = Expression.Create("1+1/1");
+            Expression summe = Expression.Create("(1+1)/1");
             summe.CreateUI();
             EquationHistory.DockAt(summe.DockPanel, Dock.Top);
             
@@ -168,7 +168,8 @@ namespace Projekt_M_TestProgramm
                 inputString = inputString.Insert(cursorPosition++, "" + newChar);  // "" + newChar to convert into string
             }
             EquationHistory.Clear();
-            EquationHistory.DockAt(new ExtendedLabel(inputString), Dock.Top);
+
+            EquationHistory.DockAt(Expression.Create(inputString).CreateUI(), Dock.Top);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
