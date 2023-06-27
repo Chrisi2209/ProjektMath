@@ -12,7 +12,7 @@
     
     <Grid>
         <Label x:Name="TestLabel"></Label>
-		<!--
+        <!--
 		<Grid>
 			<Border BorderBrush="Red" BorderThickness="2">
 		        <DockPanel HorizontalAlignment="Center">
@@ -23,6 +23,7 @@
 		        </DockPanel>
             </Border>
 		</Grid> -->
+        
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"></ColumnDefinition>

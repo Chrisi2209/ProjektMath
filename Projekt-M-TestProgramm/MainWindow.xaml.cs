@@ -23,8 +23,9 @@ namespace Projekt_M_TestProgramm
     {
         public MainWindow()
         {
-            InitializeComponent();
-            KeyDown += ScrollViewer_KeyDown;
+            //InitializeComponent();
+            //KeyDown += ScrollViewer_KeyDown;
+
             /*
             Sum summe = new Sum();
             summe.Expressions = new BinArray<Expression>(4);
@@ -81,24 +82,23 @@ namespace Projekt_M_TestProgramm
             (((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Expression = new Number();
             ((((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Expression as Number).Num = 5;
             */
-            
-            Expression summe = Expression.Create("(1+1)/1");
-            summe.CreateUI();
-            EquationHistory.DockAt(summe.DockPanel, Dock.Top);
-            
+
+            //Expression summe = Expression.Create(new StringInfo());
+            //summe.CreateUI();
+            //EquationHistory.DockAt(summe.DockPanel, Dock.Top);
+
             // TestLabel.Content = summe[3].DockPanel.Width;
-            
+
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // Update heights on fractions so that the fraction bars are centered
-            Fraction.updateHeightsAndLineWidths();
+            //Fraction.updateHeightsAndLineWidths();
         }
 
 
-
-
+        /*
         private void ScrollViewer_KeyDown(object sender, KeyEventArgs e)
         {
             if (Convert.ToInt32(TestLabel.Content) == 1)
@@ -138,46 +138,424 @@ namespace Projekt_M_TestProgramm
             }
         }
 
-        static string inputString = "";
-        static BinArray<bool?> inputvisible = new BinArray<bool?>(0);
-        static int cursorPosition = 0;
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            TestLabel.Content = "abcdefg";
+        }
+        */
+
+
+
+        StringInfo input = new StringInfo();
+        int cursorPosition;
+
+        public bool AddInput_Simon(KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Left:
+                    {
+                        if (cursorPosition == 0) break;
+
+                        //input[cp0]
+                        if (cursorPosition < input.Length && input[cursorPosition].C == '(' && input[cursorPosition].Design == Design.Ghost)
+                        {
+                            int index = cursorPosition + 1;
+                            Function.GoToBracketEnd(input, ref index);
+                            input[index].Design = Design.Hidden;
+                            input[cursorPosition].Design = Design.Hidden;
+                        }
+
+                        //input[cp0 - 1]
+                        if (input[--cursorPosition].C == '(' && input[cursorPosition].Design == Design.AutoBracket)
+                        {
+                            int index = cursorPosition + 1;
+                            Function.GoToBracketEnd(input, ref index);
+                            input[cursorPosition].Design = Design.Visible;
+                        }
+
+                        //input[cp0 - 2]
+                        if (0 < cursorPosition && input[--cursorPosition].Design == Design.Hidden && input[cursorPosition].C == ')')
+                        {
+                            input[cursorPosition].Design = Design.Ghost;
+                            int index = cursorPosition - 2;
+                            Function.GoToBracketStart(input, ref index);
+                            input[index].Design = Design.Ghost;
+                        }
+
+                        cursorPosition++;
+
+                        break;
+                    }
+                case Key.Right:
+                    {
+                        if (cursorPosition == input.Length) break;
+
+                        //input[cp0 - 1]
+                        if (0 < cursorPosition-- && input[cursorPosition].C == ')')
+                        {
+                            int index = cursorPosition - 1;
+                            Function.GoToBracketStart(input, ref index);
+                            switch (input[cursorPosition].Design)
+                            {
+                                case Design.Visible: input[index].Design = Design.Visible; break;
+                                case Design.Ghost:
+                                    {
+                                        input[index].Design = Design.Hidden;
+                                        input[cursorPosition].Design = Design.Hidden;
+                                        break;
+                                    }
+                                default: throw new ArgumentException();
+                            }
+                        }
+
+                        //input[cp0]
+                        if (input[++cursorPosition].C == ')' && input[cursorPosition].Design == Design.AutoBracket) input[cursorPosition].Design = Design.Visible;
+
+                        //input[cp0 + 1]
+                        if (input[++cursorPosition].Design == Design.Hidden)
+                        {
+                            switch (input[cursorPosition].C)
+                            {
+                                case '(':
+                                    {
+                                        input[cursorPosition].Design = Design.Ghost;
+                                        int index = cursorPosition + 1;
+                                        Function.GoToBracketEnd(input, ref index);
+                                        input[index].Design = Design.Ghost;
+                                        break;
+                                    }
+                                case ')':
+                                    {
+                                        input[cursorPosition].Design = Design.Ghost;
+                                        int index = cursorPosition - 1;
+                                        Function.GoToBracketStart(input, ref index);
+                                        input[index].Design = Design.Ghost;
+                                        break;
+                                    }
+                            }
+                        }
+
+                        break;
+                    }
+                case Key.Up:
+                case Key.Down:
+                    {
+                        //input[cp0]
+                        FarFrom(cursorPosition);
+
+                        //input[cp0 - 1]
+                        if (0 < cursorPosition) FarFrom(cursorPosition - 1);
+
+                        switch (e.Key)
+                        {
+                            case Key.Up:
+                                {
+                                    cursorPosition = 0;
+                                    if (input[cursorPosition].C == '(')
+                                    {
+                                        switch (input[cursorPosition].Design)
+                                        {
+                                            case Design.Hidden:
+                                                {
+                                                    input[cursorPosition].Design = Design.Ghost;
+                                                    int index = cursorPosition + 1;
+                                                    Function.GoToBracketEnd(input, ref index);
+                                                    input[index].Design = Design.Ghost;
+                                                    break;
+                                                }
+                                            case Design.AutoBracket:
+                                                {
+                                                    int index = cursorPosition;
+                                                    do input[index].Design = Design.Visible; while (input[++index].Design == Design.AutoBracket);
+                                                    break;
+                                                }
+                                        }
+                                    }
+                                    break;
+                                }
+                            case Key.Down:
+                                {
+                                    cursorPosition = input.Length - 1;
+                                    if (input[cursorPosition].C == ')')
+                                    {
+                                        switch (input[cursorPosition].Design)
+                                        {
+                                            case Design.Hidden:
+                                                {
+                                                    input[cursorPosition].Design = Design.Ghost;
+                                                    int index = cursorPosition - 1;
+                                                    Function.GoToBracketStart(input, ref index);
+                                                    input[index].Design = Design.Ghost;
+                                                    break;
+                                                }
+                                            case Design.AutoBracket:
+                                                {
+                                                    int index = cursorPosition;
+                                                    do input[index].Design = Design.Visible; while (input[--index].Design == Design.AutoBracket);
+                                                    break;
+                                                }
+                                        }
+                                    }
+                                    cursorPosition++;
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+
+                case Key.Back:
+                    {
+                        if (cursorPosition == 0) break;
+
+                        switch (input[--cursorPosition].C)
+                        {
+                            case '(':
+                            case ')':
+
+                            case char c when OperationPart.IsOperation(c):
+                                {
+                                    input.Remove1(cursorPosition);
+
+                                    break;
+                                }
+
+                            case char c when Number.IsDigit(c):
+                                {
+                                    break;
+                                }
+
+                            case char c when Variable.IsLetter(c):
+                                {
+                                    break;
+                                }
+
+                            default: throw new ArgumentException();
+                        }
+
+                        break;
+                    }
+                case Key.Delete:
+                    {
+                        
+                        break;
+                    }
+                case Key.Enter: return true;
+
+                case Key.Oem5:
+                    {
+                        e.Handled = true;
+                        goto default;
+                    }
+                default:
+                    {
+
+                        break;
+                    }
+            }
+            return false;
+        }
+        public void FarFrom(int cursorIndex)
+        {
+            switch (input[cursorIndex].C)
+            {
+                case '(':
+                case ')':
+                    {
+                        if (input[cursorIndex].Design != Design.Ghost) break;
+                        int index = cursorIndex;
+                        if (input[cursorIndex].C == '(')
+                        {
+                            index++;
+                            Function.GoToBracketEnd(input, ref index);
+                        }
+                        else
+                        {
+                            index--;
+                            Function.GoToBracketStart(input, ref index);
+                        }
+                        input[cursorIndex].Design = Design.Hidden;
+                        input[index].Design = Design.Hidden;
+                        break;
+                    }
+            }
+        }
+
+        /*
         private void AddInput(char newChar)
         {
-            /*
-             * int values 1 and 2 are reserved for Left and Right arrows
-             */
+             // int values 1 and 2 are reserved for Left and Right arrows
+             
             if (newChar == 1)
             {
                 TestLabel.Content = "1aaaa";
-                cursorPosition--;
+                CursorPosition--;
             }
             else if (newChar == 2)
             {
                 TestLabel.Content = "1aaaa";
-                cursorPosition++;
+                CursorPosition++;
             }
             else if (newChar == 8)  // Backspace
             {
-                if (cursorPosition != 0)  // Exception is raised if not checked
+                if (CursorPosition != 0)  // Exception is raised if not checked
                 {
-                    inputString = inputString.Remove(--cursorPosition);
+                    inputString = inputString.Remove(--CursorPosition);
                 }
             }
             else
             {
-                inputString = inputString.Insert(cursorPosition++, "" + newChar);  // "" + newChar to convert into string
+                inputString = inputString.Insert(CursorPosition++, "" + newChar);  // "" + newChar to convert into string
             }
             EquationHistory.Clear();
 
             EquationHistory.DockAt(Expression.Create(inputString).CreateUI(), Dock.Top);
         }
+        */
+    }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+
+
+    public enum Design
+    {
+        Visible,
+        Hidden,
+        Ghost,
+        AutoBracket
+    }
+
+    public class CharInfo
+    {
+        public char C { get; set; }
+        public Design Design { get; set; }
+
+        public CharInfo(char c, Design design = Design.Visible)
         {
-            TestLabel.Content = "abcdefg";
+            C = c;
+            Design = design;
+        }
+        static public implicit operator CharInfo(char c)
+        {
+            return new CharInfo(c);
+        }
+
+        static public bool operator <(CharInfo ci0, CharInfo ci1)
+        {
+            return ci0.C < ci1.C;
+        }
+        static public bool operator <=(CharInfo ci0, CharInfo ci1)
+        {
+            return ci0.C <= ci1.C;
+        }
+        static public bool operator >=(CharInfo ci0, CharInfo ci1)
+        {
+            return ci0.C >= ci1.C;
+        }
+        static public bool operator >(CharInfo ci0, CharInfo ci1)
+        {
+            return ci0.C > ci1.C;
+        }
+
+        public bool EqualTo(CharInfo ci)
+        {
+            return C == ci.C && Design == ci.Design;
         }
     }
 
+    public class StringInfo : BinArray<CharInfo>
+    {
+        public StringInfo() : base(0) { }
+        public StringInfo(string input) : base(input.Length)
+        {
+            for (int i = 0; i < Length; i++) this[i] = new CharInfo(input[i]);
+        }
+        static public implicit operator StringInfo(string input)
+        {
+            return new StringInfo(input);
+        }
+        public StringInfo(StringInfo stringInfo) : base(stringInfo.Length)
+        {
+            for (int i = 0; i < Length; i++) this[i] = stringInfo[i];
+        }
+        public StringInfo(int length) : base(length) { }
+
+        static public StringInfo operator +(StringInfo stringInfo, CharInfo ci)
+        {
+            StringInfo output = new StringInfo(stringInfo);
+            output.Append(ci);
+            return output;
+        }
+        static public StringInfo operator +(CharInfo ci, StringInfo stringInfo)
+        {
+            StringInfo output = new StringInfo(stringInfo);
+            output.Insert(0, ci);
+            return output;
+        }
+        static public StringInfo operator +(StringInfo stringInfo0, StringInfo stringInfo1)
+        {
+            StringInfo output = new StringInfo(stringInfo0);
+            output.Append(stringInfo1);
+            return output;
+        }
+        static public StringInfo operator *(StringInfo stringInfo, uint factor)
+        {
+            StringInfo output = new StringInfo();
+            for (; 0 < factor; factor--) output.Append(stringInfo);
+            return output;
+        }
+
+        public StringInfo Substring(int startIndex)
+        {
+            StringInfo output = new StringInfo(Length - startIndex);
+            for (int i = startIndex; i < Length; i++) output[i] = this[i];
+            return output;
+        }
+        public StringInfo Substring(int startIndex, int length)
+        {
+            StringInfo output = new StringInfo(length);
+            for (int i = startIndex; i < length; i++) output[i] = this[i];
+            return output;
+        }
+
+        public new StringInfo Remove1(int index)
+        {
+            StringInfo output = new StringInfo(this);
+            output.BaseRemove1(index);
+            return output;
+        }
+        public void BaseRemove1(int index)
+        {
+            base.Remove1(index);
+        }
+        public new StringInfo Remove(int startIndex)
+        {
+            StringInfo output = new StringInfo(this);
+            output.BaseRemove(startIndex);
+            return output;
+        }
+        public void BaseRemove(int startIndex)
+        {
+            base.Remove(startIndex);
+        }
+        public new StringInfo Remove(int startIndex, int count)
+        {
+            StringInfo output = new StringInfo(this);
+            output.BaseRemove(startIndex, count);
+            return output;
+        }
+        public void BaseRemove(int startIndex, int count)
+        {
+            base.Remove(startIndex, count);
+        }
+
+        public override string ToString()
+        {
+            string output = "";
+            for (int i = 0; i < Length; i++) output += this[i].C;
+            return output;
+        }
+    }
 
 
     public class Expression
@@ -186,9 +564,10 @@ namespace Projekt_M_TestProgramm
         private ExtendedDockPanel dockPanel;
         private bool? visible;
 
-        public ExtendedDockPanel DockPanel {
-            get {return dockPanel;} 
-            protected set {dockPanel = value;}
+        public ExtendedDockPanel DockPanel
+        {
+            get { return dockPanel; }
+            protected set { dockPanel = value; }
         }
         public Expression BackPointer { get; set; }
         public bool? Visible
@@ -221,7 +600,7 @@ namespace Projekt_M_TestProgramm
             set { throw new Exception(); }
         }
 
-        static public Expression Create(string input, Expression backPointer = null)
+        static public Expression Create(StringInfo input, Expression backPointer = null)
         {
             Expression expression;
             while (true)
@@ -240,7 +619,7 @@ namespace Projekt_M_TestProgramm
             expression.visible = true;
             return expression;
         }
-        
+
         public virtual ExtendedDockPanel CreateUI()
         {
             // Initialises the Dockpanel for this object
@@ -256,6 +635,11 @@ namespace Projekt_M_TestProgramm
 
             return DockPanel;
         }
+
+        public override string ToString()
+        {
+            return "#";
+        }
     }
 
 
@@ -266,7 +650,12 @@ namespace Projekt_M_TestProgramm
          * Thus there is a Label and the DockPanel is no longer used.
          */
 
-        static public NullExpression Create(string input)
+        public override int Length
+        {
+            get { return 0; }
+        }
+
+        static public NullExpression Create(StringInfo input)
         {
             NullExpression nullExpression;
             while (true)
@@ -281,11 +670,6 @@ namespace Projekt_M_TestProgramm
             }
             return nullExpression;
         }
-        public override int Length
-        {
-            get { return 0; }
-        }
-
 
         public ExtendedDockPanel CreateLabelUI(string name)
         {
@@ -322,10 +706,10 @@ namespace Projekt_M_TestProgramm
             }
         }
 
-        static public UnitExpression Create(string input)
+        static public UnitExpression Create(StringInfo input)
         {
             UnitExpression unitExpression;
-            string nextInput;
+            StringInfo nextInput;
             while (true)
             {
                 unitExpression = Function.Create(input, out nextInput);
@@ -369,10 +753,10 @@ namespace Projekt_M_TestProgramm
             }
         }
 
-        static public DoubleExpression Create(string input)
+        static public DoubleExpression Create(StringInfo input)
         {
             DoubleExpression doubleExpression;
-            string nextInputA, nextInputB;
+            StringInfo nextInputA, nextInputB;
             while (true)
             {
                 doubleExpression = Fraction.Create(input, out nextInputA, out nextInputB);
@@ -400,11 +784,11 @@ namespace Projekt_M_TestProgramm
             set { Expressions[index] = value; }
         }
 
-        static public RepeatedExpression Create(string input)
+        static public RepeatedExpression Create(StringInfo input)
         {
             RepeatedExpression repeatedExpression;
-            BinArray<string> nextInputs;
-            
+            BinArray<StringInfo> nextInputs;
+
             while (true)
             {
                 repeatedExpression = Sum.Create(input, out nextInputs);
@@ -425,9 +809,9 @@ namespace Projekt_M_TestProgramm
 
     public class EmptyExpression : NullExpression
     {
-        static public new EmptyExpression Create(string input)
+        static public new EmptyExpression Create(StringInfo input)
         {
-            if (input == "") return new EmptyExpression();
+            if (input.Length == 0) return new EmptyExpression();
             else return null;
         }
 
@@ -447,16 +831,16 @@ namespace Projekt_M_TestProgramm
             set { num = value; }
         }
 
-        static public new Number Create(string input)
+        static public new Number Create(StringInfo input)
         {
             Number number = new Number();
             if (input.Length == 0 || input[0] < '0' || '9' < input[0]) return null;
             // using data field for number.num because property can't be an out parameter
-            if (!long.TryParse(input, out number.num)) number = null;
+            if (!long.TryParse(input.ToString(), out number.num)) number = null;
             return number;
         }
 
-        public override ExtendedDockPanel CreateUI() 
+        public override ExtendedDockPanel CreateUI()
         {
             DockPanel = CreateLabelUI(Convert.ToString(Num));
             return DockPanel;
@@ -466,9 +850,9 @@ namespace Projekt_M_TestProgramm
             return '0' <= c && c <= '9';
         }
 
-        static public void GoBehindNumber(string input, ref int index)
+        static public void GoBehindNumber(StringInfo input, ref int index)
         {
-            while (index < input.Length && IsDigit(input[index])) index++;
+            while (index < input.Length && IsDigit(input[index].C)) index++;
         }
 
         public override string ToString()
@@ -481,14 +865,14 @@ namespace Projekt_M_TestProgramm
     {
         public string Name { get; set; }
 
-        static public new Variable Create(string input)
+        static public new Variable Create(StringInfo input)
         {
             Variable variable = new Variable();
             for (int i = 0; i < input.Length; i++)
             {
                 if ((input[i] < 'a' || 'z' < input[i]) && (input[i] < 'A' || 'Z' < input[i])) return null;
             }
-            variable.Name = input;
+            variable.Name = input.ToString();
             return variable;
         }
 
@@ -497,11 +881,11 @@ namespace Projekt_M_TestProgramm
             return 'a' <= c && c <= 'z' || 'A' <= c && c <= 'Z';
         }
 
-        static public void GoBehindVariable(string input, ref int index)
+        static public void GoBehindVariable(StringInfo input, ref int index)
         {
-            while (index < input.Length && IsLetter(input[index])) index++;
+            while (index < input.Length && IsLetter(input[index].C)) index++;
         }
-        
+
         public override string ToString()
         {
             return Name;
@@ -512,29 +896,29 @@ namespace Projekt_M_TestProgramm
     {
         static Brush operationColor = Brushes.Blue;
 
-        public char Operation { get; set; }
+        public CharInfo Operation { get; set; }
 
-        static public OperationPart Create(string input, out string nextInput)
+        static public OperationPart Create(StringInfo input, out StringInfo nextInput)
         {
             OperationPart operationPart = new OperationPart();
             nextInput = null;
             if (input.Length == 0) return null;
             int index = 0;
-            switch (input[index++])
+            switch (input[index++].C)
             {
                 case '+':
                 case '-':
                     {
                         while (index < input.Length)
                         {
-                            switch (input[index++])
+                            switch (input[index++].C)
                             {
                                 case '+':
                                 case '-': return null;
                                 case '*':
                                 case '/':
                                 case '^': break;
-                                case '(': Function.GoOutOfBracket(input, ref index); break;
+                                case '(': Function.GoToBracketEnd(input, ref index); break;
                                 case char c when Number.IsDigit(c): Number.GoBehindNumber(input, ref index); break;
                                 case char c when Variable.IsLetter(c): Variable.GoBehindVariable(input, ref index); break;
                             }
@@ -545,14 +929,14 @@ namespace Projekt_M_TestProgramm
                     {
                         while (index < input.Length)
                         {
-                            switch (input[index++])
+                            switch (input[index++].C)
                             {
                                 case '+':
                                 case '-':
                                 case '*':
                                 case '/': return null;
                                 case '^': break;
-                                case '(': Function.GoOutOfBracket(input, ref index); break;
+                                case '(': Function.GoToBracketEnd(input, ref index); break;
                                 case char c when Number.IsDigit(c): Number.GoBehindNumber(input, ref index); break;
                                 case char c when Variable.IsLetter(c): Variable.GoBehindVariable(input, ref index); break;
                             }
@@ -561,7 +945,7 @@ namespace Projekt_M_TestProgramm
                     }
                 default: return null;
             }
-            operationPart.Operation = input[0];
+            operationPart.Operation.C = input[0].C;
             nextInput = input.Substring(1);
             return operationPart;
         }
@@ -571,9 +955,22 @@ namespace Projekt_M_TestProgramm
             // create the dockpanel
             DockPanel = new ExtendedDockPanel(
                 Dock.Left,
-                new ExtendedLabel(operationColor, Operation), Expression.CreateUI()
+                new ExtendedLabel(operationColor, Operation.C), Expression.CreateUI()
             );
             return DockPanel;
+        }
+
+        static public bool IsOperation(char c)
+        {
+            switch (c)
+            {
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                case '^': return true;
+                default: return false;
+            }
         }
     }
 
@@ -592,52 +989,52 @@ namespace Projekt_M_TestProgramm
         static Brush functionNameColor = Brushes.Orange;
 
         public string Name { get; set; }
-        public bool? VisibleOpen { get; set; }
-        public char BracketOpen { get; set; }
-        public bool? VisibleClose { get; set; }
-        public char BracketClose { get; set; }
+        public CharInfo BracketOpen { get; set; }
+        public CharInfo BracketClose { get; set; }
 
-        public override ExtendedDockPanel CreateUI()
-        {
-            // create the dockpanel
-            DockPanel = new ExtendedDockPanel(
-                Dock.Left, 
-                new ExtendedLabel(functionNameColor, Name), new ExtendedLabel(BracketOpen), Expression.CreateUI(), new ExtendedLabel(BracketClose)
-            );
-            return DockPanel;
-        }
-
-        static public Function Create(string input, out string nextInput)
+        static public Function Create(StringInfo input, out StringInfo nextInput)
         {
             Function funktion = new Function();
             nextInput = null;
             if (input.Length < 2) return null;
             int index = 0;
-            switch (input[index++])
+            switch (input[index++].C)
             {
                 case '(':
                     {
-                        GoOutOfBracket(input, ref index);
+                        GoToBracketEnd(input, ref index);
                         if (index < 0) throw new ArgumentOutOfRangeException();
-                        if (index < input.Length) return null;
+                        if (++index < input.Length) return null;
                         funktion.Name = "";
                         break;
                     }
                 case char c when Variable.IsLetter(c):
                     {
                         Variable.GoBehindVariable(input, ref index);
-                        if (index == input.Length || input[index++] != '(') return null;
-                        funktion.Name = input.Remove(index - 1);
-                        GoOutOfBracket(input, ref index);
-                        if (index < input.Length) return null;
+                        if (index == input.Length || input[index++].C != '(') return null;
+                        funktion.Name = input.Remove(index - 1).ToString();
+                        GoToBracketEnd(input, ref index);
+                        if (++index < input.Length) return null;
                         break;
                     }
                 default: return null;
             }
-            funktion.BracketOpen = '(';
-            funktion.BracketClose = ')';
-            nextInput = input.Substring(funktion.Name.Length + 1, input.Length - funktion.Name.Length - 2);
+            int bracketStart = funktion.Name.Length;
+            int bracketEnd = input.Length - funktion.Name.Length - 1;
+            funktion.BracketOpen = input[bracketStart++];
+            funktion.BracketClose = input[bracketEnd--];
+            nextInput = input.Substring(bracketStart, bracketEnd);
             return funktion;
+        }
+
+        public override ExtendedDockPanel CreateUI()
+        {
+            // create the dockpanel
+            DockPanel = new ExtendedDockPanel(
+                Dock.Left,
+                new ExtendedLabel(functionNameColor, Name), new ExtendedLabel(BracketOpen.C), Expression.CreateUI(), new ExtendedLabel(BracketClose.C)
+            );
+            return DockPanel;
         }
 
         /// <summary>
@@ -646,26 +1043,41 @@ namespace Projekt_M_TestProgramm
         /// <param name="input"></param>
         /// <param name="index">this index starts inside of the brackets, returns -1 when not found</param>
         /// <param name="bracketCounter"> '(' --> ++;     ')' --> --; </param>
-        static public void GoOutOfBracket(string input, ref int index, int bracketCounter = 1)
+        static public void GoToBracketEnd(StringInfo input, ref int index, int bracketCounter = 1)
         {
-            for (; index < input.Length && 0 < bracketCounter; index++)
+            while (bracketCounter != 0 && index < input.Length)
             {
-                switch (input[index])
+                switch (input[index++].C)
                 {
                     case '(': bracketCounter++; break;
                     case ')': bracketCounter--; break;
                 }
             }
-            if (0 < bracketCounter) index = -1;
+            if (bracketCounter != 0) index = -1;
+            else index--;
+            return;
+        }
+        static public void GoToBracketStart(StringInfo input, ref int index, int bracketCounter = -1)
+        {
+            while (bracketCounter != 0 && 0 <= index)
+            {
+                switch (input[index--].C)
+                {
+                    case '(': bracketCounter++; break;
+                    case ')': bracketCounter--; break;
+                }
+            }
+            if (bracketCounter != 0) index = -1;
+            else index++;
             return;
         }
     }
 
     public class Fraction : DoubleExpression
     {
-        static public BinArray<Fraction> needsHeightUpdate = new BinArray<Fraction>();
+        static public BinArray<Fraction> needsHeightUpdate = new BinArray<Fraction>(2);
 
-        static public Fraction Create(string input, out string nextInputA, out string nextInputB)
+        static public Fraction Create(StringInfo input, out StringInfo nextInputA, out StringInfo nextInputB)
         {
             Fraction fraction = new Fraction();
             nextInputA = null;
@@ -673,11 +1085,11 @@ namespace Projekt_M_TestProgramm
             int index = 0;
             while (true)
             {
-                switch (input[index++])
+                switch (input[index++].C)
                 {
                     case '(':
                         {
-                            Function.GoOutOfBracket(input, ref index);
+                            Function.GoToBracketEnd(input, ref index);
                             if (index < 0) throw new ArgumentOutOfRangeException();
                             break;
                         }
@@ -689,17 +1101,17 @@ namespace Projekt_M_TestProgramm
                     case char c when Variable.IsLetter(c):
                         {
                             Variable.GoBehindVariable(input, ref index);
-                            if (index != input.Length && input[index] == '(')
+                            if (index != input.Length && input[index].C == '(')
                             {
                                 index++;
-                                Function.GoOutOfBracket(input, ref index);
+                                Function.GoToBracketEnd(input, ref index);
                             }
                             break;
                         }
                     default: return null;
                 }
-                if (index == input.Length) return null;
-                switch (input[index])
+                if (++index == input.Length) return null;
+                switch (input[index].C)
                 {
                     case '/': break;
                     case '^':
@@ -712,15 +1124,15 @@ namespace Projekt_M_TestProgramm
                 break;
             }
             nextInputA = input.Remove(index++);
-            if (index == input.Length) return null;
             nextInputB = input.Substring(index);
+            if (index == input.Length) return fraction;
             while (true)
             {
-                switch (input[index++])
+                switch (input[index++].C)
                 {
                     case '(':
                         {
-                            Function.GoOutOfBracket(input, ref index);
+                            Function.GoToBracketEnd(input, ref index);
                             if (index < 0) throw new ArgumentOutOfRangeException();
                             break;
                         }
@@ -732,17 +1144,17 @@ namespace Projekt_M_TestProgramm
                     case char c when Variable.IsLetter(c):
                         {
                             Variable.GoBehindVariable(input, ref index);
-                            if (index != input.Length && input[index] == '(')
+                            if (index != input.Length && input[index].C == '(')
                             {
                                 index++;
-                                Function.GoOutOfBracket(input, ref index);
+                                Function.GoToBracketEnd(input, ref index);
                             }
                             break;
                         }
                     default: return null;
                 }
-                if (index == input.Length) break;
-                if (input[index++] == '^') continue;
+                if (++index == input.Length) break;
+                if (input[index++].C == '^') continue;
                 return null;
             }
             return fraction;
@@ -799,7 +1211,7 @@ namespace Projekt_M_TestProgramm
                 (fraction.DockPanel.Children[1] as Rectangle).Width = (fraction.DockPanel.Children[1] as Rectangle).ActualWidth * 1.1;
             }
         }
-        
+
         public override string ToString()
         {
             return "(" + ExpressionA.ToString() + "/" + ExpressionB.ToString() + ")";
@@ -808,17 +1220,17 @@ namespace Projekt_M_TestProgramm
 
     public class Power : DoubleExpression
     {
-        static public Power Create(string input, out string nextInputA, out string nextInputB)
+        static public Power Create(StringInfo input, out StringInfo nextInputA, out StringInfo nextInputB)
         {
             Power power = new Power();
             nextInputA = null;
             nextInputB = null;
             int index = 0;
-            switch (input[index++])
+            switch (input[index++].C)
             {
                 case '(':
                     {
-                        Function.GoOutOfBracket(input, ref index);
+                        Function.GoToBracketEnd(input, ref index);
                         break;
                     }
                 case char c when Number.IsDigit(c):
@@ -829,24 +1241,24 @@ namespace Projekt_M_TestProgramm
                 case char c when Variable.IsLetter(c):
                     {
                         Variable.GoBehindVariable(input, ref index);
-                        if (index!=input.Length&&input[index]=='(')
+                        if (index != input.Length && input[index].C == '(')
                         {
                             index++;
-                            Function.GoOutOfBracket(input, ref index);
+                            Function.GoToBracketEnd(input, ref index);
                         }
                         break;
                     }
             }
-            nextInputA = input.Remove(index);
-            if (index == input.Length || input[index++] != '^') return null;
+            nextInputA = input.Remove(++index);
+            if (index == input.Length || input[index++].C != '^') return null;
             nextInputB = input.Substring(index);
             while (true)
             {
-                switch (input[index++])
+                switch (input[index++].C)
                 {
                     case '(':
                         {
-                            Function.GoOutOfBracket(input, ref index);
+                            Function.GoToBracketEnd(input, ref index);
                             break;
                         }
                     case char c when Number.IsDigit(c):
@@ -857,17 +1269,17 @@ namespace Projekt_M_TestProgramm
                     case char c when Variable.IsLetter(c):
                         {
                             Variable.GoBehindVariable(input, ref index);
-                            if (index != input.Length && input[index] == '(')
+                            if (index != input.Length && input[index].C == '(')
                             {
                                 index++;
-                                Function.GoOutOfBracket(input, ref index);
+                                Function.GoToBracketEnd(input, ref index);
                             }
                             break;
                         }
                 }
-                if (index != input.Length)
+                if (++index != input.Length)
                 {
-                    if (input[index++] == '^') continue;
+                    if (input[index++].C == '^') continue;
                     return null;
                 }
                 break;
@@ -883,21 +1295,21 @@ namespace Projekt_M_TestProgramm
 
     public class Sum : RepeatedExpression
     {
-         /*
-         * Only for specific methods that are only possible with sums.
-         * Here to group additions AND SUBTRACTIONS together
-         * THE SUM DOES NOT ADD THE + AND - SIGNS, FUNCTION IS RESPONSIBLE FOR THIS!!!!
-         */
-        static public Sum Create(string input, out BinArray<string> nextInputs)
+        /*
+        * Only for specific methods that are only possible with sums.
+        * Here to group additions AND SUBTRACTIONS together
+        * THE SUM DOES NOT ADD THE + AND - SIGNS, FUNCTION IS RESPONSIBLE FOR THIS!!!!
+        */
+        static public Sum Create(StringInfo input, out BinArray<StringInfo> nextInputs)
         {
             Sum sum = new Sum();
-            nextInputs = new BinArray<string>(0);
+            nextInputs = new BinArray<StringInfo>(0);
             int index = 0;
             if (input.Length == 0) return null;
-            if (input[index] == '+' || input[index] == '-') index++;
+            if (input[index].C == '+' || input[index].C == '-') index++;
             while (index < input.Length)
             {
-                switch (input[index++])
+                switch (input[index++].C)
                 {
                     case '+':
                     case '-':
@@ -909,7 +1321,7 @@ namespace Projekt_M_TestProgramm
                         }
                     case '(':
                         {
-                            Function.GoOutOfBracket(input, ref index);
+                            Function.GoToBracketEnd(input, ref index);
                             if (index < 0) throw new ArgumentOutOfRangeException();
                             break;
                         }
@@ -933,14 +1345,14 @@ namespace Projekt_M_TestProgramm
 
     public class Product : RepeatedExpression
     {
-        static public Product Create(string input, out BinArray<string> nextInputs)
+        static public Product Create(StringInfo input, out BinArray<StringInfo> nextInputs)
         {
             Product product = new Product();
-            nextInputs = new BinArray<string>(0);
+            nextInputs = new BinArray<StringInfo>(0);
             int index = 0;
             while (index < input.Length)
             {
-                switch (input[index++])
+                switch (input[index++].C)
                 {
                     case '+':
                     case '-': return null;
@@ -953,7 +1365,7 @@ namespace Projekt_M_TestProgramm
                         }
                     case '(':
                         {
-                            Function.GoOutOfBracket(input, ref index);
+                            Function.GoToBracketEnd(input, ref index);
                             if (index < 0) throw new ArgumentOutOfRangeException();
                             break;
                         }
@@ -978,6 +1390,8 @@ namespace Projekt_M_TestProgramm
         }
     }
 
+
+
     public class ExtendedLabel : Label
     {
         private void InitialiseValues()
@@ -989,7 +1403,7 @@ namespace Projekt_M_TestProgramm
             VerticalAlignment = VerticalAlignment.Center;
         }
 
-        public ExtendedLabel(string content="") : base() 
+        public ExtendedLabel(string content = "") : base()
         {
             InitialiseValues();
             Foreground = Brushes.White;
@@ -1025,9 +1439,9 @@ namespace Projekt_M_TestProgramm
 
     }
 
-    public class ExtendedDockPanel: DockPanel
+    public class ExtendedDockPanel : DockPanel
     {
-        public ExtendedDockPanel(Dock dockDirection, params UIElement[] elements): base()
+        public ExtendedDockPanel(Dock dockDirection, params UIElement[] elements) : base()
         {
             foreach (UIElement element in elements)
             {
@@ -1039,7 +1453,7 @@ namespace Projekt_M_TestProgramm
             VerticalAlignment = VerticalAlignment.Center;
         }
 
-        public ExtendedDockPanel(): base() { }
+        public ExtendedDockPanel() : base() { }
 
         public void DockAt(UIElement element, Dock dockDirection)
         {
@@ -1055,7 +1469,7 @@ namespace Projekt_M_TestProgramm
 
         public void Clear()
         {
-            for(int i = 0; i < Children.Count; i++)
+            for (int i = 0; i < Children.Count; i++)
             {
                 Children.RemoveAt(i);
             }

@@ -1327,14 +1327,6 @@ namespace Simon
 
 
         /// <summary>
-        /// Erstellt ein BinArray mit einem Array der länge 2.
-        /// </summary>
-        public BinArray()
-        {
-            array = new T[2];
-        }
-
-        /// <summary>
         /// Erstellt ein BinArray mit der länge <paramref name="length"/>.
         /// </summary>
         /// <param name="length">gibt die länge des Arrays an</param>
@@ -1470,22 +1462,32 @@ namespace Simon
         /// Entfernt den Wert an der Stelle <paramref name="index"/>.
         /// </summary>
         /// <param name="index">Kann den Wert von 0 bis 'Anzahl'-1 haben.</param>
-        public void Remove(int index)
+        public void Remove1(int index)
         {
             if (index < 0 || Length <= index) throw new ArgumentOutOfRangeException();
             Array.Copy(array, index + 1, array, index, --Length - index);
         }
 
         /// <summary>
-        /// Entfernt <paramref name="length"/> Werte vom BinArray, begonnen bei <paramref name="index"/>.
+        /// Entfernt alle Werte ab dem <paramref name="startIndex"/>. 
         /// </summary>
-        /// <param name="index">Kann einen Wert von 0 bis 'Anzahl'-'länge' haben.</param>
-        /// <param name="length">Gibt an wie viele Werte vom BinArray entfernt wereden.</param>
-        public void Remove(int index, int length)
+        /// <param name="startIndex"></param>
+        public void Remove(int startIndex)
         {
-            if (index < 0 || length < 0 || Length < index + length) throw new ArgumentOutOfRangeException();
-            Length -= length;
-            Array.Copy(array, index + length, array, index, Length - index);
+            if (startIndex < 0 || Length < startIndex) throw new IndexOutOfRangeException();
+            Length = startIndex;
+        }
+
+        /// <summary>
+        /// Entfernt <paramref name="count"/> Werte vom BinArray, begonnen bei <paramref name="startIndex"/>.
+        /// </summary>
+        /// <param name="startIndex">Kann einen Wert von 0 bis 'Anzahl'-'länge' haben.</param>
+        /// <param name="count">Gibt an wie viele Werte vom BinArray entfernt wereden.</param>
+        public void Remove(int startIndex, int count)
+        {
+            if (startIndex < 0 || count < 0 || Length < startIndex + count) throw new ArgumentOutOfRangeException();
+            Length -= count;
+            Array.Copy(array, startIndex + count, array, startIndex, Length - startIndex);
         }
 
         /// <summary>
@@ -1682,7 +1684,7 @@ namespace Simon
         }
 
 
-        public new string ToString()
+        public override string ToString()
         {
             if (Length == 0) return "{ }";
             string zeichenkette = "(" + Length + ") { " + this[0].ToString();
