@@ -557,6 +557,201 @@ namespace Projekt_M_TestProgramm
         }
     }
 
+    public class StringCursor
+    {
+        public string String { get; private set; }
+        public int Length
+        {
+            get { return String.Length; }
+        }
+        public int Cursor { get; private set; }
+        public char? CurentChar
+        {
+            get
+            {
+                if (Cursor == String.Length) return null;
+                else return String[Cursor];
+            }
+        }
+
+        public char this[int i]
+        {
+            get
+            {
+                return String[i];
+            }
+        }
+
+        public StringCursor()
+        {
+            String = "";
+        }
+        public StringCursor(string str)
+        {
+            String = str == null ? "" : str;
+        }
+        public StringCursor(string str, int cursor)
+        {
+            String = str == null ? "" : str;
+            Cursor = cursor < 0 ? 0 : cursor < String.Length ? cursor : String.Length;
+        }
+
+        static public string operator +(StringCursor sc0, StringCursor sc1)
+        {
+            return sc0.String + sc1.String;
+        }
+        static public string operator +(StringCursor sc, string str)
+        {
+            return sc.String + str;
+        }
+        static public string operator +(string str, StringCursor sc)
+        {
+            return str + sc.String;
+        }
+
+        public void GoLeft()
+        {
+            if (0 < Cursor) Cursor--;
+        }
+        public void GoRight()
+        {
+            if (Cursor < String.Length) Cursor++;
+        }
+        public void GoStart()
+        {
+            Cursor = 0;
+        }
+        public void GoEnd()
+        {
+            Cursor = String.Length;
+        }
+
+        public void Delete()
+        {
+            if (Cursor < String.Length) String = String.Remove(Cursor, 1);
+        }
+        public void Delete(int count)
+        {
+            if (Cursor + count < String.Length) String = String.Remove(Cursor, count);
+            else String = String.Remove(Cursor);
+        }
+        public void Backspace()
+        {
+            if (0 < Cursor) String = String.Remove(--Cursor, 1);
+        }
+        public void Backspace(int count)
+        {
+            if (count < Cursor)
+            {
+                Cursor -= count;
+                String = String.Remove(Cursor, count);
+            }
+            else
+            {
+                String = String.Substring(Cursor);
+                Cursor = 0;
+            }
+        }
+
+        public void Clear()
+        {
+            Cursor = 0;
+            String = "";
+        }
+        public void WriteNew(string str)
+        {
+            Cursor = 0;
+            String = str;
+        }
+
+        public void Write(char c)
+        {
+            String.Insert(Cursor, c.ToString());
+        }
+        public void Write(string str)
+        {
+            String.Insert(Cursor, str);
+        }
+        public void OverWrite(char c)
+        {
+            Delete();
+            Write(c);
+        }
+        public void Overwrite(string str)
+        {
+            Delete(str.Length);
+            Write(str);
+        }
+
+        public new string ToString()
+        {
+            return String + " " + Cursor + " (" + CurentChar + ")";
+        }
+    }
+
+    static public class InputManagementSystem
+    {
+        static public bool Read(StringCursor strCur, ConsoleKeyInfo cki)
+        {
+            switch (cki.Key)
+            {
+                case ConsoleKey.LeftArrow: strCur.GoLeft(); break;
+                case ConsoleKey.RightArrow: strCur.GoRight(); break;
+                case ConsoleKey.UpArrow: strCur.GoStart(); break;
+                case ConsoleKey.DownArrow: strCur.GoEnd(); break;
+
+                case ConsoleKey.Backspace: strCur.Backspace(); break;
+                case ConsoleKey.Delete: strCur.Delete(); break;
+
+                case ConsoleKey.Enter: return true;
+
+                default:
+                    {
+                        switch (cki.KeyChar)
+                        {
+                            case char c when '0' <= c && c <= '9' || 'a' <= c && c <= 'z' || 'A' <= c && c <= 'Z':
+                            case '+':
+                            case '-':
+                            case '*':
+                            case '/':
+                            case '(':
+                            case ')':
+                                {
+                                    strCur.Write(cki.KeyChar);
+                                    break;
+                                }
+                        }
+                        break;
+                    }
+            }
+            return false;
+        }
+        static public StringInfo ConvertToStringInfo(StringCursor strCur, out int cursor)
+        {
+            StringInfo result = "";
+            int bracketCounter = 0, bracketsOpen = 0;
+            for (int i = 0; i < strCur.Length; i++)
+            {
+                switch (strCur[i])
+                {
+                    case '(': bracketCounter++; break;
+                    case ')': bracketCounter--; break;
+                }
+                if (bracketCounter < 0)
+                {
+                    bracketCounter++;
+                    bracketsOpen++;
+                }
+            }
+            for (int i = 0; i < bracketsOpen; i++) result += new CharInfo('(', Design.AutoBracket);
+            result += strCur.String;
+            for (int i = 0; i < bracketCounter; i++) result += new CharInfo(')', Design.AutoBracket);
+            cursor = bracketsOpen + strCur.Cursor;
+            return result;
+        }
+    }
+
+
 
     public class Expression
     {
