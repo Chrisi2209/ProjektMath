@@ -1278,7 +1278,7 @@ namespace Simon
         }
     }
 
-    public class BinArray<T>
+    class BinArray<T>
     {
         private T[] array;
         private int length;

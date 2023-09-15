@@ -33,12 +33,14 @@
                 <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
             
-
+            <!--Hallo-->
             <DockPanel Grid.Column="0">
-                <Button Height="50" Click="Button_Click">Klick mich!</Button>
+                <!-- Click="Button_Click"-->
+                <Button Height="50">Klick mich!</Button>
             </DockPanel>
 
-            <ScrollViewer Grid.Column="1" FontSize="42" FontStyle="Italic" Foreground="White" PreviewTextInput="ScrollViewer_PreviewTextInput">
+            <!-- PreviewTextInput="ScrollViewer_PreviewTextInput"-->
+            <ScrollViewer Grid.Column="1" FontSize="42" FontStyle="Italic" Foreground="White">
 			    <local:ExtendedDockPanel x:Name="EquationHistory" HorizontalAlignment="Center" VerticalAlignment="Center">
 				
 			    </local:ExtendedDockPanel>
