@@ -25,77 +25,17 @@ namespace Projekt_M_TestProgramm
         {
             InitializeComponent();
             KeyDown += ScrollViewer_KeyDown;
+            scrollViewer_EquationHistory.Focus();
 
             /*
             Expression expression;
-            expression = Expression.Create("+*//*+-*");
+            StringInfo input = "hallo+-";
+            expression = Expression.Create(input);
+            input = InputManagementSystem.ConvertToStringInfo(input.ToString(), out _);
+            expression = Expression.Create(input);
+            expression = InputManagementSystem.GetEmptyExpression(expression);
             while (true) { }
             /**/
-
-
-            /*
-            Sum summe = new Sum();
-            summe.Expressions = new BinArray<Expression>(4);
-            summe[0] = new OperationPart();
-            (summe[0] as OperationPart).Operation = '-';
-            (summe[0] as OperationPart).Expression = new Number();
-            ((summe[0] as OperationPart).Expression as Number).Num = 12;
-
-            summe[1] = new OperationPart();
-            (summe[1] as OperationPart).Operation = '+';
-            (summe[1] as OperationPart).Expression = new Number();
-            ((summe[1] as OperationPart).Expression as Number).Num = 5;
-
-            summe[2] = new Product();
-            (summe[2] as Product).Expressions = new BinArray<Expression>(2);
-
-            (summe[2] as Product).Expressions[0] = new OperationPart();
-            ((summe[2] as Product).Expressions[0] as OperationPart).Operation = '-';
-            ((summe[2] as Product).Expressions[0] as OperationPart).Expression = new Number();
-            (((summe[2] as Product).Expressions[0] as OperationPart).Expression as Number).Num = 23;
-            
-            (summe[2] as Product).Expressions[1] = new OperationPart();
-            ((summe[2] as Product).Expressions[1] as OperationPart).Operation = '*';
-            ((summe[2] as Product).Expressions[1] as OperationPart).Expression = new Number();
-            (((summe[2] as Product).Expressions[1] as OperationPart).Expression as Number).Num = 17;
-
-            summe[3] = new OperationPart();
-            (summe[3] as OperationPart).Operation = '+';
-            (summe[3] as OperationPart).Expression = new Fraction();
-
-            ((summe[3] as OperationPart).Expression as Fraction).ExpressionA = new Sum();
-            (((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions = new BinArray<Expression>(2);
-            (((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[0] = new OperationPart();
-            ((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[0] as OperationPart).Operation = '+';
-            ((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[0] as OperationPart).Expression = new Number();
-            (((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[0] as OperationPart).Expression as Number).Num = 4;
-
-            (((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[1] = new OperationPart();
-            ((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[1] as OperationPart).Operation = '-';
-
-            ((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[1] as OperationPart).Expression = new Fraction();
-            Fraction fr = ((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[1] as OperationPart).Expression as Fraction;
-            fr.ExpressionA = new OperationPart();
-            (fr.ExpressionA as OperationPart).Operation = '+';
-            (fr.ExpressionA as OperationPart).Expression = new Number();
-            ((fr.ExpressionA as OperationPart).Expression as Number).Num = 12123;
-            fr.ExpressionB = new OperationPart();
-            (fr.ExpressionB as OperationPart).Operation = '-';
-            (fr.ExpressionB as OperationPart).Expression = new Number();
-            ((fr.ExpressionB as OperationPart).Expression as Number).Num = 8;
-            
-            ((summe[3] as OperationPart).Expression as Fraction).ExpressionB = new OperationPart();
-            (((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Operation = '+';
-            (((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Expression = new Number();
-            ((((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Expression as Number).Num = 5;
-            */
-
-            //Expression summe = Expression.Create(new StringInfo());
-            //summe.CreateUI();
-            //EquationHistory.DockAt(summe.DockPanel, Dock.Top);
-
-            // TestLabel.Content = summe[3].DockPanel.Width;
-
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -104,328 +44,27 @@ namespace Projekt_M_TestProgramm
             //Fraction.updateHeightsAndLineWidths();
         }
 
+        Key key;
+        Expression expression;
         private void ScrollViewer_KeyDown(object sender, KeyEventArgs e)
         {
-
-        }
-        private void ScrollViewer_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-
-        }
-
-        /*
-        private void ScrollViewer_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (Convert.ToInt32(TestLabel.Content) == 1)
-            {
-                TestLabel.Content = 0;
-            }
-            else
-            {
-                TestLabel.Content = 1;
-            }
-
-
             if (e.Key == Key.Oem5)
             {
-                AddInput('^');
                 e.Handled = true;
+                InputManagementSystem.AddInput(e.Key, '^');
+                expression = Expression.Create(InputManagementSystem.ConvertToStringInfo(InputManagementSystem.strCur, out _));
+                EquationHistory.DockAt(expression.CreateUI(), Dock.Top);
             }
-            else if (e.Key == Key.Left)
-            {
-                TestLabel.Content = 100000000;
-                AddInput(Convert.ToChar(1));
-            }
-            else if (e.Key == Key.Right)
-            {
-                TestLabel.Content = 200000000;
-                AddInput(Convert.ToChar(2));
-            }
+            else key = e.Key;
         }
-
         private void ScrollViewer_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            char input = e.Text[0];
-            // 59 = ; | 63 = ? | 64 = @ | 92 = \ | 96 = ' | 127 = DEL
-            if (input == '!' || input == 8 || (input >= 40 && input != 59 && input != 63 && input != 64 && input != 92 && input != 96 && input < 127))
-            {
-                AddInput(e.Text[0]);
-            }
+            if (InputManagementSystem.AddInput(key, e.Text[0])) { }
+            StringInfo strInf = InputManagementSystem.ConvertToStringInfo(InputManagementSystem.strCur, out _);
+            expression = Expression.Create(strInf);
+            expression.CreateUI();
+            EquationHistory.DockAt(expression.DockPanel, Dock.Top);
         }
-        
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            TestLabel.Content = "abcdefg";
-        }
-        /**/
-
-        /*
-        StringInfo input = new StringInfo();
-        int cursorPosition;
-
-        public bool AddInput_Simon(KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Left:
-                    {
-                        if (cursorPosition == 0) break;
-
-                        //input[cp0]
-                        if (cursorPosition < input.Count && input[cursorPosition].C == '(' && input[cursorPosition].Design == Design.Ghost)
-                        {
-                            int index = cursorPosition + 1;
-                            Function.GoToBracketEnd(input, ref index);
-                            input[index].Design = Design.Hidden;
-                            input[cursorPosition].Design = Design.Hidden;
-                        }
-
-                        //input[cp0 - 1]
-                        if (input[--cursorPosition].C == '(' && input[cursorPosition].Design == Design.AutoBracket)
-                        {
-                            int index = cursorPosition + 1;
-                            Function.GoToBracketEnd(input, ref index);
-                            input[cursorPosition].Design = Design.Visible;
-                        }
-
-                        //input[cp0 - 2]
-                        if (0 < cursorPosition && input[--cursorPosition].Design == Design.Hidden && input[cursorPosition].C == ')')
-                        {
-                            input[cursorPosition].Design = Design.Ghost;
-                            int index = cursorPosition - 2;
-                            Function.GoToBracketStart(input, ref index);
-                            input[index].Design = Design.Ghost;
-                        }
-
-                        cursorPosition++;
-
-                        break;
-                    }
-                case Key.Right:
-                    {
-                        if (cursorPosition == input.Count) break;
-
-                        //input[cp0 - 1]
-                        if (0 < cursorPosition-- && input[cursorPosition].C == ')')
-                        {
-                            int index = cursorPosition - 1;
-                            Function.GoToBracketStart(input, ref index);
-                            switch (input[cursorPosition].Design)
-                            {
-                                case Design.Visible: input[index].Design = Design.Visible; break;
-                                case Design.Ghost:
-                                    {
-                                        input[index].Design = Design.Hidden;
-                                        input[cursorPosition].Design = Design.Hidden;
-                                        break;
-                                    }
-                                default: throw new ArgumentException();
-                            }
-                        }
-
-                        //input[cp0]
-                        if (input[++cursorPosition].C == ')' && input[cursorPosition].Design == Design.AutoBracket) input[cursorPosition].Design = Design.Visible;
-
-                        //input[cp0 + 1]
-                        if (input[++cursorPosition].Design == Design.Hidden)
-                        {
-                            switch (input[cursorPosition].C)
-                            {
-                                case '(':
-                                    {
-                                        input[cursorPosition].Design = Design.Ghost;
-                                        int index = cursorPosition + 1;
-                                        Function.GoToBracketEnd(input, ref index);
-                                        input[index].Design = Design.Ghost;
-                                        break;
-                                    }
-                                case ')':
-                                    {
-                                        input[cursorPosition].Design = Design.Ghost;
-                                        int index = cursorPosition - 1;
-                                        Function.GoToBracketStart(input, ref index);
-                                        input[index].Design = Design.Ghost;
-                                        break;
-                                    }
-                            }
-                        }
-
-                        break;
-                    }
-                case Key.Up:
-                case Key.Down:
-                    {
-                        //input[cp0]
-                        FarFrom(cursorPosition);
-
-                        //input[cp0 - 1]
-                        if (0 < cursorPosition) FarFrom(cursorPosition - 1);
-
-                        switch (e.Key)
-                        {
-                            case Key.Up:
-                                {
-                                    cursorPosition = 0;
-                                    if (input[cursorPosition].C == '(')
-                                    {
-                                        switch (input[cursorPosition].Design)
-                                        {
-                                            case Design.Hidden:
-                                                {
-                                                    input[cursorPosition].Design = Design.Ghost;
-                                                    int index = cursorPosition + 1;
-                                                    Function.GoToBracketEnd(input, ref index);
-                                                    input[index].Design = Design.Ghost;
-                                                    break;
-                                                }
-                                            case Design.AutoBracket:
-                                                {
-                                                    int index = cursorPosition;
-                                                    do input[index].Design = Design.Visible; while (input[++index].Design == Design.AutoBracket);
-                                                    break;
-                                                }
-                                        }
-                                    }
-                                    break;
-                                }
-                            case Key.Down:
-                                {
-                                    cursorPosition = input.Count - 1;
-                                    if (input[cursorPosition].C == ')')
-                                    {
-                                        switch (input[cursorPosition].Design)
-                                        {
-                                            case Design.Hidden:
-                                                {
-                                                    input[cursorPosition].Design = Design.Ghost;
-                                                    int index = cursorPosition - 1;
-                                                    Function.GoToBracketStart(input, ref index);
-                                                    input[index].Design = Design.Ghost;
-                                                    break;
-                                                }
-                                            case Design.AutoBracket:
-                                                {
-                                                    int index = cursorPosition;
-                                                    do input[index].Design = Design.Visible; while (input[--index].Design == Design.AutoBracket);
-                                                    break;
-                                                }
-                                        }
-                                    }
-                                    cursorPosition++;
-                                    break;
-                                }
-                        }
-
-                        break;
-                    }
-
-                case Key.Back:
-                    {
-                        if (cursorPosition == 0) break;
-
-                        switch (input[--cursorPosition].C)
-                        {
-                            case '(':
-                            case ')':
-
-                            case char c when OperationPart.IsOperation(c):
-                                {
-                                    input.RemoveAt(cursorPosition);
-                                    break;
-                                }
-
-                            case char c when Number.IsDigit(c):
-                                {
-                                    break;
-                                }
-
-                            case char c when Variable.IsLetter(c):
-                                {
-                                    break;
-                                }
-
-                            default: throw new ArgumentException();
-                        }
-
-                        break;
-                    }
-                case Key.Delete:
-                    {
-                        
-                        break;
-                    }
-                case Key.Enter: return true;
-
-                case Key.Oem5:
-                    {
-                        e.Handled = true;
-                        goto default;
-                    }
-                default:
-                    {
-
-                        break;
-                    }
-            }
-            return false;
-        }
-        public void FarFrom(int cursorIndex)
-        {
-            switch (input[cursorIndex].C)
-            {
-                case '(':
-                case ')':
-                    {
-                        if (input[cursorIndex].Design != Design.Ghost) break;
-                        int index = cursorIndex;
-                        if (input[cursorIndex].C == '(')
-                        {
-                            index++;
-                            Function.GoToBracketEnd(input, ref index);
-                        }
-                        else
-                        {
-                            index--;
-                            Function.GoToBracketStart(input, ref index);
-                        }
-                        input[cursorIndex].Design = Design.Hidden;
-                        input[index].Design = Design.Hidden;
-                        break;
-                    }
-            }
-        }
-
-        /*
-        private void AddInput(char newChar)
-        {
-             // int values 1 and 2 are reserved for Left and Right arrows
-             
-            if (newChar == 1)
-            {
-                TestLabel.Content = "1aaaa";
-                CursorPosition--;
-            }
-            else if (newChar == 2)
-            {
-                TestLabel.Content = "1aaaa";
-                CursorPosition++;
-            }
-            else if (newChar == 8)  // Backspace
-            {
-                if (CursorPosition != 0)  // Exception is raised if not checked
-                {
-                    inputString = inputString.Remove(--CursorPosition);
-                }
-            }
-            else
-            {
-                inputString = inputString.Insert(CursorPosition++, "" + newChar);  // "" + newChar to convert into string
-            }
-            EquationHistory.Clear();
-
-            EquationHistory.DockAt(Expression.Create(inputString).CreateUI(), Dock.Top);
-        }
-        */
     }
 
 
@@ -435,7 +74,7 @@ namespace Projekt_M_TestProgramm
         Visible,
         Hidden,
         Ghost,
-        AutoBracket
+        Auto
     }
 
     public class CharInfo
@@ -611,6 +250,10 @@ namespace Projekt_M_TestProgramm
         {
             String = str == null ? "" : str;
         }
+        static public implicit operator StringCursor(string str)
+        {
+            return new StringCursor(str);
+        }
         public StringCursor(string str, int cursor)
         {
             String = str == null ? "" : str;
@@ -634,9 +277,19 @@ namespace Projekt_M_TestProgramm
         {
             if (0 < Cursor) Cursor--;
         }
+        public void GoLeft(int count)
+        {
+            if (count < Cursor) Cursor -= count;
+            else Cursor = 0;
+        }
         public void GoRight()
         {
             if (Cursor < String.Length) Cursor++;
+        }
+        public void GoRight(int count)
+        {
+            Cursor += count;
+            if (Length < Cursor) Cursor = Length;
         }
         public void GoStart()
         {
@@ -645,6 +298,11 @@ namespace Projekt_M_TestProgramm
         public void GoEnd()
         {
             Cursor = String.Length;
+        }
+        public void GoTo(int pos)
+        {
+            if (pos < 0 || Length < pos) throw new ArgumentOutOfRangeException();
+            Cursor = pos;
         }
 
         public void Delete()
@@ -687,11 +345,11 @@ namespace Projekt_M_TestProgramm
 
         public void Write(char c)
         {
-            String.Insert(Cursor, c.ToString());
+            String = String.Insert(Cursor, c.ToString());
         }
         public void Write(string str)
         {
-            String.Insert(Cursor, str);
+            String = String.Insert(Cursor, str);
         }
         public void OverWrite(char c)
         {
@@ -706,12 +364,12 @@ namespace Projekt_M_TestProgramm
 
         public void Insert(int pos, char c)
         {
-            String.Insert(pos, c.ToString());
+            String = String.Insert(pos, c.ToString());
             if (pos <= Cursor) Cursor++;
         }
         public void Insert(int pos, string str)
         {
-            String.Insert(pos, str);
+            String = String.Insert(pos, str);
             if (pos <= Cursor) Cursor += str.Length;
         }
 
@@ -723,7 +381,44 @@ namespace Projekt_M_TestProgramm
 
     static public class InputManagementSystem
     {
-        static public bool AddInput(StringCursor strCur, ConsoleKeyInfo cki)
+        static public StringCursor strCur = new StringCursor();
+
+        static public bool AddInput(Key key, char ch)
+        {
+            switch (key)
+            {
+                case Key.Left: strCur.GoLeft(); break;
+                case Key.Right: strCur.GoRight(); break;
+                case Key.Up: strCur.GoStart(); break;
+                case Key.Down: strCur.GoEnd(); break;
+
+                case Key.Back: strCur.Backspace(); break;
+                case Key.Delete: strCur.Delete(); break;
+
+                case Key.Enter: return true;
+
+                default:
+                    {
+                        switch (ch)
+                        {
+                            case char c when '0' <= c && c <= '9' || 'a' <= c && c <= 'z' || 'A' <= c && c <= 'Z':
+                            case '+':
+                            case '-':
+                            case '*':
+                            case '/':
+                            case '(':
+                            case ')':
+                                {
+                                    strCur.Write(ch);
+                                    break;
+                                }
+                        }
+                        break;
+                    }
+            }
+            return false;
+        }
+        static private bool AddInput(StringCursor strCur, ConsoleKeyInfo cki)
         {
             switch (cki.Key)
             {
@@ -816,6 +511,21 @@ namespace Projekt_M_TestProgramm
                             bracket = true;
                             break;
                         }
+                    case '*':
+                        {
+                            if (number || variable || bracket)
+                            {
+                                number = false;
+                                variable = false;
+                                bracket = false;
+                            }
+                            else
+                            {
+                                result.Insert(i, new CharInfo(' ', Design.Hidden));
+                                if (i++ <= cursor) cursor++;
+                            }
+                            break;
+                        }
                     default:
                         {
                             number = false;
@@ -832,7 +542,7 @@ namespace Projekt_M_TestProgramm
             }
 
             //adds the brackets
-            result = new CharInfo('(', Design.AutoBracket) * bracketsOpen + result + new CharInfo(')', Design.AutoBracket) * bracketCounter;
+            result = new CharInfo('(', Design.Auto) * bracketsOpen + result + new CharInfo(')', Design.Auto) * bracketCounter;
             cursor += bracketsOpen;
 
             return result;
@@ -1214,10 +924,16 @@ namespace Projekt_M_TestProgramm
 
     public class EmptyExpression : NullExpression
     {
+        static public char Symbol = ' ';
+
         static public new EmptyExpression Create(StringInfo input)
         {
-            if (input.Count == 0) return new EmptyExpression();
-            else return null;
+            switch (input.ToString())
+            {
+                case "":
+                case " ": return new EmptyExpression();
+                default: return null;
+            }
         }
 
         public override string ToString()
@@ -1336,14 +1052,13 @@ namespace Projekt_M_TestProgramm
                                         if (index < 0) throw new ArgumentException();
                                         break;
                                     }
-                                case char c when Number.IsDigit(c): Number.GoBehindNumber(input, ref index); break;
-                                case char c when Variable.IsLetter(c): Variable.GoBehindVariable(input, ref index); break;
                             }
                         }
                         break;
                     }
                 case '*':
                     {
+
                         while (index < input.Count)
                         {
                             switch (input[index++].C)
@@ -1359,8 +1074,6 @@ namespace Projekt_M_TestProgramm
                                         if (index < 0) throw new ArgumentException();
                                         break;
                                     }
-                                case char c when Number.IsDigit(c): Number.GoBehindNumber(input, ref index); break;
-                                case char c when Variable.IsLetter(c): Variable.GoBehindVariable(input, ref index); break;
                             }
                         }
                         break;
@@ -1673,6 +1386,11 @@ namespace Projekt_M_TestProgramm
             int index = 0;
             switch (input[index++].C)
             {
+                case '^':
+                    {
+                        index--;
+                        break;
+                    }
                 case '(':
                     {
                         Function.GoBehindBracket(input, ref index);
@@ -1700,6 +1418,7 @@ namespace Projekt_M_TestProgramm
             nextInputA = input.Remove(index);
             if (index == input.Count || input[index++].C != '^') return null;
             nextInputB = input.Substring(index);
+            if (index == input.Count) return power;
             while (true)
             {
                 switch (input[index++].C)

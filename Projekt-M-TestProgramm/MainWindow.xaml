@@ -39,10 +39,10 @@
                 <Button Height="50">Klick mich!</Button>
             </DockPanel>
 
-            <!-- PreviewTextInput="ScrollViewer_PreviewTextInput"-->
-            <ScrollViewer Grid.Column="1" FontSize="42" FontStyle="Italic" Foreground="White">
+            <!---->
+            <ScrollViewer x:Name="scrollViewer_EquationHistory" Grid.Column="1" FontSize="42" FontStyle="Italic" Foreground="White" PreviewTextInput="ScrollViewer_PreviewTextInput">
 			    <local:ExtendedDockPanel x:Name="EquationHistory" HorizontalAlignment="Center" VerticalAlignment="Center">
-				
+				    
 			    </local:ExtendedDockPanel>
             </ScrollViewer>
         </Grid>
