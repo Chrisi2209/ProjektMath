@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Projekt_M_TestProgramm"
+
         mc:Ignorable="d"
         Title="ProjectMath" Height="450" Width="800"
         Background="#343541" Loaded="Window_Loaded">
@@ -24,6 +25,9 @@
             </Border>
 		</Grid> -->
         <Grid>
+            
+            
+            
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
@@ -31,14 +35,20 @@
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
-            
 
-            <DockPanel Grid.Column="0">
-                <Button Height="50" Click="Button_Click">Klick mich!</Button>
-            </DockPanel>
+            <local:DashedBorder UseDashedBorder="True"
+                       DashedBorderBrush="#878787"
+                       StrokeDashArray="2 1"
+                       Background="#464754"                               
+                       BorderThickness="3"
+                       CornerRadius="5 5 5 5"
+                       Height="30">
+                <TextBlock Text="Dashed Border"/>
+            </local:DashedBorder>
 
-            <ScrollViewer Grid.Column="1" FontSize="42" FontStyle="Italic" Foreground="White" PreviewTextInput="ScrollViewer_PreviewTextInput">
-			    <local:ExtendedDockPanel x:Name="EquationHistory" HorizontalAlignment="Center" VerticalAlignment="Center">
+
+            <ScrollViewer Grid.Column="1" FontStyle="Italic" Foreground="White" PreviewTextInput="ScrollViewer_PreviewTextInput">
+                <local:ExtendedDockPanel x:Name="EquationHistory" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="42">
 				
 			    </local:ExtendedDockPanel>
             </ScrollViewer>

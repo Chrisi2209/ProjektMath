@@ -64,6 +64,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Class1.cs" />
+    <Compile Include="BorderedDockPanel.cs" />
+    <Compile Include="ExtendedLabel.cs" />
+    <Compile Include="DashedBorder.cs" />
+    <Compile Include="ExtendedDockPanel.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
