@@ -26,7 +26,6 @@ namespace Projekt_M_TestProgramm
             InitializeComponent();
             KeyDown += ScrollViewer_KeyDown;
             scrollViewer_EquationHistory.Focus();
-
             /*
             Expression expression;
             StringInfo input = "hallo+-";
