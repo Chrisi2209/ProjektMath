@@ -25,17 +25,13 @@ namespace Projekt_M_TestProgramm
         {
             InitializeComponent();
             KeyDown += ScrollViewer_KeyDown;
-            scrollViewer_EquationHistory.Focus();
             /*
-            Expression expression;
-            StringInfo input = "hallo+-";
-            expression = Expression.Create(input);
-            input = InputManagementSystem.ConvertToStringInfo(input.ToString(), out _);
-            expression = Expression.Create(input);
-            expression = InputManagementSystem.GetEmptyExpression(expression);
-            while (true) { }
-            /**/
-        }
+            Sum summe = new Sum();
+            summe.Expressions = new BinArray<Expression>(4);
+            summe[0] = new OperationPart();
+            (summe[0] as OperationPart).Operation = '-';
+            (summe[0] as OperationPart).Expression = new Number();
+            ((summe[0] as OperationPart).Expression as Number).Num = 12;
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -92,56 +88,29 @@ namespace Projekt_M_TestProgramm
             return new CharInfo(c);
         }
 
-        static public StringInfo operator +(CharInfo ci0, CharInfo ci1)
-        {
-            return new StringInfo(ci0) + ci1;
-        }
-        static public StringInfo operator *(CharInfo ci, int factor)
-        {
-            if (factor < 0) throw new ArgumentException();
-            return new StringInfo(ci) * factor;
-        }
-        static public StringInfo operator *(int factor, CharInfo ci)
-        {
-            if (factor < 0) throw new ArgumentException();
-            return factor * new StringInfo(ci);
-        }
-
-        static public bool operator <(CharInfo ci0, CharInfo ci1)
-        {
-            return ci0.C < ci1.C;
-        }
-        static public bool operator <=(CharInfo ci0, CharInfo ci1)
-        {
-            return ci0.C <= ci1.C;
-        }
-        static public bool operator >=(CharInfo ci0, CharInfo ci1)
-        {
-            return ci0.C >= ci1.C;
-        }
-        static public bool operator >(CharInfo ci0, CharInfo ci1)
-        {
-            return ci0.C > ci1.C;
-        }
-
-        public bool EqualTo(CharInfo ci)
-        {
-            return C == ci.C && Design == ci.Design;
-        }
-
-        public new string ToString()
-        {
-            return C + " (" + Design.ToString() + ")";
-        }
-    }
-
-    public class StringInfo : List<CharInfo>
-    {
-        public StringInfo() : base(0) { }
-        public StringInfo(int length) : base(length) { }
-        public StringInfo(CharInfo ci) : base(1)
-        {
-            Add(ci);
+            ((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[1] as OperationPart).Expression = new Fraction();
+            Fraction fr = ((((summe[3] as OperationPart).Expression as Fraction).ExpressionA as Sum).Expressions[1] as OperationPart).Expression as Fraction;
+            fr.ExpressionA = new OperationPart();
+            (fr.ExpressionA as OperationPart).Operation = '+';
+            (fr.ExpressionA as OperationPart).Expression = new Number();
+            ((fr.ExpressionA as OperationPart).Expression as Number).Num = 12123;
+            fr.ExpressionB = new OperationPart();
+            (fr.ExpressionB as OperationPart).Operation = '-';
+            (fr.ExpressionB as OperationPart).Expression = new Number();
+            ((fr.ExpressionB as OperationPart).Expression as Number).Num = 8;
+            
+            ((summe[3] as OperationPart).Expression as Fraction).ExpressionB = new OperationPart();
+            (((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Operation = '+';
+            (((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Expression = new Number();
+            ((((summe[3] as OperationPart).Expression as Fraction).ExpressionB as OperationPart).Expression as Number).Num = 5;
+            */
+            
+            Expression summe = Expression.Create("(1+1)/1");
+            summe.CreateUI();
+            EquationHistory.DockAt(summe.DockPanel, Dock.Top);
+            
+            // TestLabel.Content = summe[3].DockPanel.Width;
+            
         }
         public StringInfo(string input) : base(input.Length)
         {
@@ -186,143 +155,14 @@ namespace Projekt_M_TestProgramm
             return output;
         }
 
-        public StringInfo Substring(int startIndex)
-        {
-            return new StringInfo(GetRange(startIndex, Count - startIndex));
-        }
-        public StringInfo Substring(int startIndex, int length)
-        {
-            return new StringInfo(GetRange(startIndex, length));
-        }
 
-        public StringInfo Remove(int startIndex)
-        {
-            StringInfo output = new StringInfo(this);
-            output.RemoveRange(startIndex, Count - startIndex);
-            return output;
-        }
-        public StringInfo Remove(int startIndex, int count)
-        {
-            StringInfo output = new StringInfo(this);
-            output.RemoveRange(startIndex, count);
-            return output;
-        }
 
-        public override string ToString()
-        {
-            string output = "";
-            for (int i = 0; i < Count; i++) output += this[i].C;
-            return output;
-        }
-    }
 
-    public class StringCursor
-    {
-        public string String { get; private set; }
-        public int Length
+        private void ScrollViewer_KeyDown(object sender, KeyEventArgs e)
         {
-            get { return String.Length; }
-        }
-        public int Cursor { get; private set; }
-        public char? CurentChar
-        {
-            get
+            if (Convert.ToInt32(TestLabel.Content) == 1)
             {
-                if (Cursor == String.Length) return null;
-                else return String[Cursor];
-            }
-        }
-
-        public char this[int i]
-        {
-            get
-            {
-                return String[i];
-            }
-        }
-
-        public StringCursor()
-        {
-            String = "";
-        }
-        public StringCursor(string str)
-        {
-            String = str == null ? "" : str;
-        }
-        static public implicit operator StringCursor(string str)
-        {
-            return new StringCursor(str);
-        }
-        public StringCursor(string str, int cursor)
-        {
-            String = str == null ? "" : str;
-            Cursor = cursor < 0 ? 0 : cursor < String.Length ? cursor : String.Length;
-        }
-
-        static public string operator +(StringCursor sc0, StringCursor sc1)
-        {
-            return sc0.String + sc1.String;
-        }
-        static public string operator +(StringCursor sc, string str)
-        {
-            return sc.String + str;
-        }
-        static public string operator +(string str, StringCursor sc)
-        {
-            return str + sc.String;
-        }
-
-        public void GoLeft()
-        {
-            if (0 < Cursor) Cursor--;
-        }
-        public void GoLeft(int count)
-        {
-            if (count < Cursor) Cursor -= count;
-            else Cursor = 0;
-        }
-        public void GoRight()
-        {
-            if (Cursor < String.Length) Cursor++;
-        }
-        public void GoRight(int count)
-        {
-            Cursor += count;
-            if (Length < Cursor) Cursor = Length;
-        }
-        public void GoStart()
-        {
-            Cursor = 0;
-        }
-        public void GoEnd()
-        {
-            Cursor = String.Length;
-        }
-        public void GoTo(int pos)
-        {
-            if (pos < 0 || Length < pos) throw new ArgumentOutOfRangeException();
-            Cursor = pos;
-        }
-
-        public void Delete()
-        {
-            if (Cursor < String.Length) String = String.Remove(Cursor, 1);
-        }
-        public void Delete(int count)
-        {
-            if (Cursor + count < String.Length) String = String.Remove(Cursor, count);
-            else String = String.Remove(Cursor);
-        }
-        public void Backspace()
-        {
-            if (0 < Cursor) String = String.Remove(--Cursor, 1);
-        }
-        public void Backspace(int count)
-        {
-            if (count < Cursor)
-            {
-                Cursor -= count;
-                String = String.Remove(Cursor, count);
+                TestLabel.Content = 0;
             }
             else
             {
@@ -540,137 +380,14 @@ namespace Projekt_M_TestProgramm
                 }
             }
 
-            //adds the brackets
-            result = new CharInfo('(', Design.Auto) * bracketsOpen + result + new CharInfo(')', Design.Auto) * bracketCounter;
-            cursor += bracketsOpen;
+            EquationHistory.DockAt(Expression.Create(inputString).CreateUI(), Dock.Top);
+        }
 
-            return result;
-        }
-        static public void GetSubExpression(Expression expression, ref int pointer, out Expression subExpression, out int index)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            switch (expression)
-            {
-                case Expression e when e is EmptyExpression:
-                    {
-                        subExpression = null;
-                        index = -1;
-                        return;
-                    }
-                case Expression e when e is Number || e is Variable:
-                    {
-                        if (pointer < expression.ToString().Length)
-                        {
-                            subExpression = expression;
-                            index = pointer;
-                        }
-                        else
-                        {
-                            subExpression = null;
-                            index = -1;
-                            pointer -= expression.ToString().Length;
-                        }
-                        return;
-                    }
-                case Expression e when e is OperationPart:
-                    {
-                        if (pointer == 0)
-                        {
-                            subExpression = expression;
-                            index = 0;
-                            return;
-                        }
-                        GetSubExpression(((OperationPart)expression).Expression, ref pointer, out subExpression, out index);
-                        if (subExpression != null) return;
-                        index = -1;
-                        return;
-                    }
-                case Expression e when e is Function:
-                    {
-                        Function function = (Function)expression;
-                        if (pointer <= function.Name.Length)
-                        {
-                            subExpression = expression;
-                            index = pointer;
-                            return;
-                        }
-                        GetSubExpression(function.Expression, ref pointer, out subExpression, out index);
-                        if (subExpression != null) return;
-                        if (pointer == 0)
-                        {
-                            subExpression = expression;
-                            index = pointer;
-                        }
-                        else pointer--;
-                        return;
-                    }
-                case Expression e when e is Fraction:
-                    {
-                        Fraction fraction = (Fraction)expression;
-                        GetSubExpression(fraction.ExpressionA, ref pointer, out subExpression, out index);
-                        if (subExpression != null) return;
-                        if (pointer-- == 0)
-                        {
-                            subExpression = fraction;
-                            index = 0;
-                            return;
-                        }
-                        GetSubExpression(fraction.ExpressionB, ref pointer, out subExpression, out index);
-                        if (subExpression != null) return;
-                        index = -1;
-                        return;
-                    }
-                case Expression e when e is Sum || e is Product:
-                    {
-                        RepeatedExpression repeatedExpression = (RepeatedExpression)expression;
-                        for (int i = 0; i < repeatedExpression.Length; i++)
-                        {
-                            GetSubExpression(repeatedExpression[i], ref pointer, out subExpression, out index);
-                            if (subExpression != null) return;
-                        }
-                        subExpression = null;
-                        index = -1;
-                        return;
-                    }
-                default: throw new ArgumentException("objekt unknown!");
-            }
-        }
-        static public EmptyExpression GetEmptyExpression(Expression expression)
-        {
-            switch (true)
-            {
-                case bool _ when expression is NullExpression:
-                    {
-                        if (expression is EmptyExpression) return (EmptyExpression)expression;
-                        return null;
-                    }
-                case bool _ when expression is UnitExpression:
-                    {
-                        return GetEmptyExpression(((UnitExpression)expression).Expression);
-                    }
-                case bool _ when expression is DoubleExpression:
-                    {
-                        DoubleExpression doubleExpression = (DoubleExpression)expression;
-                        EmptyExpression emptyExpression = GetEmptyExpression(doubleExpression.ExpressionA);
-                        if (emptyExpression != null) return emptyExpression;
-                        return GetEmptyExpression(doubleExpression.ExpressionB);
-                    }
-                case bool _ when expression is RepeatedExpression:
-                    {
-                        RepeatedExpression repeatedExpression = (RepeatedExpression)expression;
-                        EmptyExpression emptyExpression;
-                        for (int i = 0; i < repeatedExpression.Length; i++)
-                        {
-                            emptyExpression = GetEmptyExpression(repeatedExpression[i]);
-                            if (emptyExpression != null) return emptyExpression;
-                        }
-                        return null;
-                    }
-                default: throw new ArgumentException();
-            } 
+            TestLabel.Content = "abcdefg";
         }
     }
-
-
 
     public class Expression
     {
@@ -733,6 +450,7 @@ namespace Projekt_M_TestProgramm
             expression.visible = true;
             return expression;
         }
+        
 
         public virtual ExtendedDockPanel CreateUI()
         {
@@ -743,7 +461,7 @@ namespace Projekt_M_TestProgramm
             ExtendedDockPanel newChild;
             for (int i = 0; i < Length; i++)
             {
-                newChild = this[i].CreateUI();
+                newChild = this[i].CreateUI(fontSize);
                 DockPanel.DockAt(newChild, Dock.Left);
             }
 
@@ -785,9 +503,10 @@ namespace Projekt_M_TestProgramm
             return nullExpression;
         }
 
+
         public ExtendedDockPanel CreateLabelUI(string name)
         {
-            DockPanel = new ExtendedDockPanel(Dock.Left, new ExtendedLabel(name));
+            DockPanel = new ExtendedDockPanel(fontSize, Dock.Left, new ExtendedLabel(name));
 
             return DockPanel;
         }
@@ -962,9 +681,9 @@ namespace Projekt_M_TestProgramm
             return number;
         }
 
-        public override ExtendedDockPanel CreateUI()
+        public override ExtendedDockPanel CreateUI() 
         {
-            DockPanel = CreateLabelUI(Convert.ToString(Num));
+            DockPanel = CreateLabelUI(fontSize, Convert.ToString(Num));
             return DockPanel;
         }
         static public bool IsDigit(char c)
@@ -1084,12 +803,13 @@ namespace Projekt_M_TestProgramm
             return operationPart;
         }
 
-        public override ExtendedDockPanel CreateUI()
+        public override ExtendedDockPanel CreateUI(double fontSize)
         {
             // create the dockpanel
             DockPanel = new ExtendedDockPanel(
+                fontSize,
                 Dock.Left,
-                new ExtendedLabel(operationColor, Operation.C), Expression.CreateUI()
+                new ExtendedLabel(operationColor, Operation), Expression.CreateUI()
             );
             return DockPanel;
         }
@@ -1128,8 +848,20 @@ namespace Projekt_M_TestProgramm
         static Brush functionNameColor = Brushes.Orange;
 
         public string Name { get; set; }
-        public CharInfo BracketOpen { get; set; }
-        public CharInfo BracketClose { get; set; }
+        public bool? VisibleOpen { get; set; }
+        public char BracketOpen { get; set; }
+        public bool? VisibleClose { get; set; }
+        public char BracketClose { get; set; }
+
+        public override ExtendedDockPanel CreateUI()
+        {
+            // create the dockpanel
+            DockPanel = new ExtendedDockPanel(
+                Dock.Left, 
+                new ExtendedLabel(functionNameColor, Name), new ExtendedLabel(BracketOpen), Expression.CreateUI(), new ExtendedLabel(BracketClose)
+            );
+            return DockPanel;
+        }
 
         static public Function Create(StringInfo input, out StringInfo nextInput)
         {
@@ -1196,7 +928,36 @@ namespace Projekt_M_TestProgramm
             if (bracketCounter != 0) index = -1;
             return;
         }
-        static public void GoToBracketStart(StringInfo input, ref int index, int bracketCounter = -1)
+    }
+
+    public class Fraction : DoubleExpression
+    {
+        static public BinArray<Fraction> needsHeightUpdate = new BinArray<Fraction>();
+
+        public override ExtendedDockPanel CreateUI()
+        {
+            Rectangle fractionBar = new Rectangle();
+
+            fractionBar.Height = 2;
+            fractionBar.Fill = Brushes.White;
+
+            ExtendedDockPanel TopUi = ExpressionA.CreateUI();
+            ExtendedDockPanel BottomUi = ExpressionB.CreateUI();
+
+            // fraction bar should be bigger than content
+            TopUi.SetSideMargin();
+            BottomUi.SetSideMargin();
+
+            DockPanel = new ExtendedDockPanel(Dock.Top, TopUi, fractionBar, BottomUi);
+
+            // just a little distance before and after the fraction bar
+            DockPanel.SetSideMargin();
+            needsHeightUpdate.Append(this);
+
+            return DockPanel;
+        }
+
+        static public void updateHeightsAndLineWidths()
         {
             while (bracketCounter != 0 && 0 <= index)
             {
@@ -1455,6 +1216,17 @@ namespace Projekt_M_TestProgramm
             }
         }
 
+        public override ExtendedDockPanel CreateUI(double fontSize)
+        {
+            DockPanel = new ExtendedDockPanel(
+                fontSize, Dock.Left, 
+                ExpressionA.CreateUI(fontSize),
+                new ExtendedLabel(""),
+                new ExtendedDockPanel(fontSize / 1.5, Dock.Top, ExpressionB.CreateUI(fontSize / 1.5), new ExtendedLabel(" ")));
+            // ExpressionB.DockPanel.SetSideMargin();
+            return DockPanel;
+        }
+
         public override string ToString()
         {
             return ExpressionA.ToString() + "^" + ExpressionB.ToString();
@@ -1551,8 +1323,6 @@ namespace Projekt_M_TestProgramm
         }
     }
 
-
-
     public class ExtendedLabel : Label
     {
         private void InitialiseValues()
@@ -1564,7 +1334,7 @@ namespace Projekt_M_TestProgramm
             VerticalAlignment = VerticalAlignment.Center;
         }
 
-        public ExtendedLabel(string content = "") : base()
+        public ExtendedLabel(string content="") : base() 
         {
             InitialiseValues();
             Foreground = Brushes.White;
@@ -1600,9 +1370,9 @@ namespace Projekt_M_TestProgramm
 
     }
 
-    public class ExtendedDockPanel : DockPanel
+    public class ExtendedDockPanel: DockPanel
     {
-        public ExtendedDockPanel(Dock dockDirection, params UIElement[] elements) : base()
+        public ExtendedDockPanel(Dock dockDirection, params UIElement[] elements): base()
         {
             foreach (UIElement element in elements)
             {
@@ -1614,7 +1384,7 @@ namespace Projekt_M_TestProgramm
             VerticalAlignment = VerticalAlignment.Center;
         }
 
-        public ExtendedDockPanel() : base() { }
+        public ExtendedDockPanel(): base() { }
 
         public void DockAt(UIElement element, Dock dockDirection)
         {
@@ -1630,7 +1400,7 @@ namespace Projekt_M_TestProgramm
 
         public void Clear()
         {
-            for (int i = 0; i < Children.Count; i++)
+            for(int i = 0; i < Children.Count; i++)
             {
                 Children.RemoveAt(i);
             }
