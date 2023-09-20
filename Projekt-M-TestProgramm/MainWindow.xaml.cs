@@ -670,8 +670,6 @@ namespace Projekt_M_TestProgramm
         }
     }
 
-
-
     public class Expression
     {
         // its own UI element
@@ -733,8 +731,9 @@ namespace Projekt_M_TestProgramm
             expression.visible = true;
             return expression;
         }
+        
 
-        public virtual ExtendedDockPanel CreateUI()
+        public virtual ExtendedDockPanel CreateUI(double fontSize)
         {
             // Initialises the Dockpanel for this object
             DockPanel = new ExtendedDockPanel();
@@ -743,7 +742,7 @@ namespace Projekt_M_TestProgramm
             ExtendedDockPanel newChild;
             for (int i = 0; i < Length; i++)
             {
-                newChild = this[i].CreateUI();
+                newChild = this[i].CreateUI(fontSize);
                 DockPanel.DockAt(newChild, Dock.Left);
             }
 
@@ -785,9 +784,10 @@ namespace Projekt_M_TestProgramm
             return nullExpression;
         }
 
-        public ExtendedDockPanel CreateLabelUI(string name)
+
+        public ExtendedDockPanel CreateLabelUI(double fontSize, string name)
         {
-            DockPanel = new ExtendedDockPanel(Dock.Left, new ExtendedLabel(name));
+            DockPanel = new ExtendedDockPanel(fontSize, Dock.Left, new ExtendedLabel(name));
 
             return DockPanel;
         }
@@ -962,9 +962,9 @@ namespace Projekt_M_TestProgramm
             return number;
         }
 
-        public override ExtendedDockPanel CreateUI()
+        public override ExtendedDockPanel CreateUI(double fontSize) 
         {
-            DockPanel = CreateLabelUI(Convert.ToString(Num));
+            DockPanel = CreateLabelUI(fontSize, Convert.ToString(Num));
             return DockPanel;
         }
         static public bool IsDigit(char c)
@@ -1084,12 +1084,13 @@ namespace Projekt_M_TestProgramm
             return operationPart;
         }
 
-        public override ExtendedDockPanel CreateUI()
+        public override ExtendedDockPanel CreateUI(double fontSize)
         {
             // create the dockpanel
             DockPanel = new ExtendedDockPanel(
+                fontSize,
                 Dock.Left,
-                new ExtendedLabel(operationColor, Operation.C), Expression.CreateUI()
+                new ExtendedLabel(operationColor, Operation.C), Expression.CreateUI(fontSize)
             );
             return DockPanel;
         }
@@ -1128,8 +1129,21 @@ namespace Projekt_M_TestProgramm
         static Brush functionNameColor = Brushes.Orange;
 
         public string Name { get; set; }
+        public bool? VisibleOpen { get; set; }
         public CharInfo BracketOpen { get; set; }
+        public bool? VisibleClose { get; set; }
         public CharInfo BracketClose { get; set; }
+
+        public override ExtendedDockPanel CreateUI(double fontSize)
+        {
+            // create the dockpanel
+            DockPanel = new ExtendedDockPanel(
+                fontSize,
+                Dock.Left, 
+                new ExtendedLabel(functionNameColor, Name), new ExtendedLabel(BracketOpen), Expression.CreateUI(fontSize), new ExtendedLabel(BracketClose)
+            );
+            return DockPanel;
+        }
 
         static public Function Create(StringInfo input, out StringInfo nextInput)
         {
@@ -1167,16 +1181,6 @@ namespace Projekt_M_TestProgramm
             return funktion;
         }
 
-        public override ExtendedDockPanel CreateUI()
-        {
-            // create the dockpanel
-            DockPanel = new ExtendedDockPanel(
-                Dock.Left,
-                new ExtendedLabel(functionNameColor, Name), new ExtendedLabel(BracketOpen.C), Expression.CreateUI(), new ExtendedLabel(BracketClose.C)
-            );
-            return DockPanel;
-        }
-
         /// <summary>
         /// searches for the correct bracketClose
         /// </summary>
@@ -1196,7 +1200,36 @@ namespace Projekt_M_TestProgramm
             if (bracketCounter != 0) index = -1;
             return;
         }
-        static public void GoToBracketStart(StringInfo input, ref int index, int bracketCounter = -1)
+    }
+
+    public class Fraction : DoubleExpression
+    {
+        static public BinArray<Fraction> needsHeightUpdate = new BinArray<Fraction>();
+
+        public override ExtendedDockPanel CreateUI()
+        {
+            Rectangle fractionBar = new Rectangle();
+
+            fractionBar.Height = 2;
+            fractionBar.Fill = Brushes.White;
+
+            ExtendedDockPanel TopUi = ExpressionA.CreateUI();
+            ExtendedDockPanel BottomUi = ExpressionB.CreateUI();
+
+            // fraction bar should be bigger than content
+            TopUi.SetSideMargin();
+            BottomUi.SetSideMargin();
+
+            DockPanel = new ExtendedDockPanel(Dock.Top, TopUi, fractionBar, BottomUi);
+
+            // just a little distance before and after the fraction bar
+            DockPanel.SetSideMargin();
+            needsHeightUpdate.Append(this);
+
+            return DockPanel;
+        }
+
+        static public void updateHeightsAndLineWidths()
         {
             while (bracketCounter != 0 && 0 <= index)
             {
@@ -1317,28 +1350,6 @@ namespace Projekt_M_TestProgramm
             }
         }
 
-        public override ExtendedDockPanel CreateUI()
-        {
-            Rectangle fractionBar = new Rectangle();
-
-            fractionBar.Height = 2;
-            fractionBar.Fill = Brushes.White;
-
-            ExtendedDockPanel TopUi = ExpressionA.CreateUI();
-            ExtendedDockPanel BottomUi = ExpressionB.CreateUI();
-
-            // fraction bar should be bigger than content
-            TopUi.SetSideMargin();
-            BottomUi.SetSideMargin();
-
-            DockPanel = new ExtendedDockPanel(Dock.Top, TopUi, fractionBar, BottomUi);
-
-            // just a little distance before and after the fraction bar
-            DockPanel.SetSideMargin();
-            needsHeightUpdate.Append(this);
-
-            return DockPanel;
-        }
 
         static public void updateHeightsAndLineWidths()
         {
@@ -1368,6 +1379,30 @@ namespace Projekt_M_TestProgramm
                 (fraction.DockPanel.Children[1] as Rectangle).Width = (fraction.DockPanel.Children[1] as Rectangle).ActualWidth * 1.1;
             }
         }
+
+        public override ExtendedDockPanel CreateUI(double fontSize)
+        {
+            Rectangle fractionBar = new Rectangle();
+
+            fractionBar.Height = 2;
+            fractionBar.Fill = Brushes.White;
+
+            ExtendedDockPanel TopUi = ExpressionA.CreateUI(fontSize);
+            ExtendedDockPanel BottomUi = ExpressionB.CreateUI(fontSize);
+
+            // fraction bar should be bigger than content
+            TopUi.SetSideMargin();
+            BottomUi.SetSideMargin();
+
+            DockPanel = new ExtendedDockPanel(fontSize, Dock.Top, TopUi, fractionBar, BottomUi);
+
+            // just a little distance before and after the fraction bar
+            DockPanel.SetSideMargin();
+            needsHeightUpdate.Append(this);
+
+            return DockPanel;
+        }
+
 
         public override string ToString()
         {
@@ -1453,6 +1488,17 @@ namespace Projekt_M_TestProgramm
                 }
                 return power;
             }
+        }
+
+        public override ExtendedDockPanel CreateUI(double fontSize)
+        {
+            DockPanel = new ExtendedDockPanel(
+                fontSize, Dock.Left, 
+                ExpressionA.CreateUI(fontSize),
+                new ExtendedLabel(""),
+                new ExtendedDockPanel(fontSize / 1.5, Dock.Top, ExpressionB.CreateUI(fontSize / 1.5), new ExtendedLabel(" ")));
+            // ExpressionB.DockPanel.SetSideMargin();
+            return DockPanel;
         }
 
         public override string ToString()
@@ -1548,92 +1594,6 @@ namespace Projekt_M_TestProgramm
             string output = "";
             for (int i = 0; i < Length; i++) output += this[i].ToString();
             return output;
-        }
-    }
-
-
-
-    public class ExtendedLabel : Label
-    {
-        private void InitialiseValues()
-        {
-            // helper for constructors
-            Padding = new Thickness(0);
-            Margin = new Thickness(1, 0, 1, 0);
-            HorizontalAlignment = HorizontalAlignment.Center;
-            VerticalAlignment = VerticalAlignment.Center;
-        }
-
-        public ExtendedLabel(string content = "") : base()
-        {
-            InitialiseValues();
-            Foreground = Brushes.White;
-
-            Content = content;
-        }
-
-        public ExtendedLabel(char content = '\0') : base()
-        {
-            InitialiseValues();
-            Foreground = Brushes.White;
-
-            Content = content;
-        }
-
-        public ExtendedLabel(Brush foreground, string content = "") : base()
-        {
-            InitialiseValues();
-            Foreground = foreground;
-
-            Content = content;
-        }
-
-
-        public ExtendedLabel(Brush foreground, char content = '\0') : base()
-        {
-            InitialiseValues();
-            Foreground = foreground;
-
-            Content = content;
-        }
-
-
-    }
-
-    public class ExtendedDockPanel : DockPanel
-    {
-        public ExtendedDockPanel(Dock dockDirection, params UIElement[] elements) : base()
-        {
-            foreach (UIElement element in elements)
-            {
-                DockAt(element, dockDirection);
-            }
-
-            // Especially for fractions very helpful
-            HorizontalAlignment = HorizontalAlignment.Center;
-            VerticalAlignment = VerticalAlignment.Center;
-        }
-
-        public ExtendedDockPanel() : base() { }
-
-        public void DockAt(UIElement element, Dock dockDirection)
-        {
-            DockPanel.SetDock(element, dockDirection);
-            this.Children.Add(element);
-        }
-
-        public void SetSideMargin()
-        {
-            // Sometimes, some distance makes us happy
-            Margin = new Thickness(5, 0, 5, 0);
-        }
-
-        public void Clear()
-        {
-            for (int i = 0; i < Children.Count; i++)
-            {
-                Children.RemoveAt(i);
-            }
         }
     }
 }
