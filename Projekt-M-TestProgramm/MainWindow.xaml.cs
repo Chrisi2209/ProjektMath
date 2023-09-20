@@ -52,7 +52,7 @@ namespace Projekt_M_TestProgramm
                 e.Handled = true;
                 InputManagementSystem.AddInput(e.Key, '^');
                 expression = Expression.Create(InputManagementSystem.ConvertToStringInfo(InputManagementSystem.strCur, out _));
-                EquationHistory.DockAt(expression.CreateUI(), Dock.Top);
+                EquationHistory.DockAt(expression.CreateUI(24), Dock.Top);
             }
             else key = e.Key;
         }
@@ -61,7 +61,7 @@ namespace Projekt_M_TestProgramm
             if (InputManagementSystem.AddInput(key, e.Text[0])) { }
             StringInfo strInf = InputManagementSystem.ConvertToStringInfo(InputManagementSystem.strCur, out _);
             expression = Expression.Create(strInf);
-            expression.CreateUI();
+            expression.CreateUI(24);
             EquationHistory.DockAt(expression.DockPanel, Dock.Top);
         }
     }
@@ -345,10 +345,12 @@ namespace Projekt_M_TestProgramm
         public void Write(char c)
         {
             String = String.Insert(Cursor, c.ToString());
+            GoRight();
         }
         public void Write(string str)
         {
             String = String.Insert(Cursor, str);
+            GoRight();
         }
         public void OverWrite(char c)
         {
@@ -1140,7 +1142,7 @@ namespace Projekt_M_TestProgramm
             DockPanel = new ExtendedDockPanel(
                 fontSize,
                 Dock.Left, 
-                new ExtendedLabel(functionNameColor, Name), new ExtendedLabel(BracketOpen), Expression.CreateUI(fontSize), new ExtendedLabel(BracketClose)
+                new ExtendedLabel(functionNameColor, Name), new ExtendedLabel(BracketOpen.C), Expression.CreateUI(fontSize), new ExtendedLabel(BracketClose.C)
             );
             return DockPanel;
         }
@@ -1204,54 +1206,7 @@ namespace Projekt_M_TestProgramm
 
     public class Fraction : DoubleExpression
     {
-        static public BinArray<Fraction> needsHeightUpdate = new BinArray<Fraction>();
 
-        public override ExtendedDockPanel CreateUI()
-        {
-            Rectangle fractionBar = new Rectangle();
-
-            fractionBar.Height = 2;
-            fractionBar.Fill = Brushes.White;
-
-            ExtendedDockPanel TopUi = ExpressionA.CreateUI();
-            ExtendedDockPanel BottomUi = ExpressionB.CreateUI();
-
-            // fraction bar should be bigger than content
-            TopUi.SetSideMargin();
-            BottomUi.SetSideMargin();
-
-            DockPanel = new ExtendedDockPanel(Dock.Top, TopUi, fractionBar, BottomUi);
-
-            // just a little distance before and after the fraction bar
-            DockPanel.SetSideMargin();
-            needsHeightUpdate.Append(this);
-
-            return DockPanel;
-        }
-
-        static public void updateHeightsAndLineWidths()
-        {
-            while (bracketCounter != 0 && 0 <= index)
-            {
-                switch (input[index--].C)
-                {
-                    case '(': bracketCounter++; break;
-                    case ')': bracketCounter--; break;
-                }
-            }
-            if (bracketCounter != 0) index = -1;
-            else index++;
-            return;
-        }
-
-        public override string ToString()
-        {
-            return Name + "(" + Expression.ToString() + ")";
-        }
-    }
-
-    public class Fraction : DoubleExpression
-    {
         static public List<Fraction> needsHeightUpdate = new List<Fraction>(2);
 
         static public Fraction Create(StringInfo input, out StringInfo nextInputA, out StringInfo nextInputB)
