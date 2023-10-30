@@ -52,6 +52,7 @@ namespace Projekt_M_TestProgramm
                 e.Handled = true;
                 InputManagementSystem.AddInput(e.Key, '^');
                 expression = Expression.Create(InputManagementSystem.ConvertToStringInfo(InputManagementSystem.strCur, out _));
+                EquationHistory.Clear();
                 EquationHistory.DockAt(expression.CreateUI(), Dock.Top);
             }
             else key = e.Key;
@@ -62,6 +63,7 @@ namespace Projekt_M_TestProgramm
             StringInfo strInf = InputManagementSystem.ConvertToStringInfo(InputManagementSystem.strCur, out _);
             expression = Expression.Create(strInf);
             expression.CreateUI();
+            EquationHistory.Clear();
             EquationHistory.DockAt(expression.DockPanel, Dock.Top);
         }
     }
@@ -344,11 +346,12 @@ namespace Projekt_M_TestProgramm
 
         public void Write(char c)
         {
-            String = String.Insert(Cursor, c.ToString());
+            String = String.Insert(Cursor++, c.ToString());
         }
         public void Write(string str)
         {
             String = String.Insert(Cursor, str);
+            Cursor += str.Length;
         }
         public void OverWrite(char c)
         {
@@ -996,6 +999,11 @@ namespace Projekt_M_TestProgramm
             if (index < input.Count) return null;
             variable.Name = input.ToString();
             return variable;
+        }
+        public override ExtendedDockPanel CreateUI()
+        {
+            DockPanel = CreateLabelUI(Name);
+            return DockPanel;
         }
 
         static public bool IsLetter(char c)
