@@ -624,7 +624,7 @@ namespace Projekt_M_TestProgramm
                     }
                 case Expression e when e is Sum || e is Product:
                     {
-                        RepeatedExpression repeatedExpression = (RepeatedExpression)expression;
+                        RepeatedExpression_old repeatedExpression = (RepeatedExpression_old)expression;
                         for (int i = 0; i < repeatedExpression.Length; i++)
                         {
                             GetSubExpression(repeatedExpression[i], ref pointer, out subExpression, out index);
@@ -657,9 +657,9 @@ namespace Projekt_M_TestProgramm
                         if (emptyExpression != null) return emptyExpression;
                         return GetEmptyExpression(doubleExpression.ExpressionB);
                     }
-                case bool _ when expression is RepeatedExpression:
+                case bool _ when expression is RepeatedExpression_old:
                     {
-                        RepeatedExpression repeatedExpression = (RepeatedExpression)expression;
+                        RepeatedExpression_old repeatedExpression = (RepeatedExpression_old)expression;
                         EmptyExpression emptyExpression;
                         for (int i = 0; i < repeatedExpression.Length; i++)
                         {
@@ -726,7 +726,7 @@ namespace Projekt_M_TestProgramm
                 if (expression != null) break;
                 expression = DoubleExpression.Create(input);
                 if (expression != null) break;
-                expression = RepeatedExpression.Create(input);
+                expression = RepeatedExpression_old.Create(input);
                 if (expression != null) break;
                 throw new Exception();
             }
@@ -888,7 +888,7 @@ namespace Projekt_M_TestProgramm
         }
     }
 
-    public class RepeatedExpression : Expression
+    public class RepeatedExpression_old : Expression
     {
         public List<Expression> Expressions { get; set; }
         public override int Length
@@ -901,9 +901,9 @@ namespace Projekt_M_TestProgramm
             set { Expressions[index] = value; }
         }
 
-        static public RepeatedExpression Create(StringInfo input)
+        static public RepeatedExpression_old Create(StringInfo input)
         {
-            RepeatedExpression repeatedExpression;
+            RepeatedExpression_old repeatedExpression;
             List<StringInfo> nextInputs;
 
             while (true)
@@ -922,7 +922,6 @@ namespace Projekt_M_TestProgramm
             return repeatedExpression;
         }
     }
-
 
     public class EmptyExpression : NullExpression
     {
@@ -1468,7 +1467,7 @@ namespace Projekt_M_TestProgramm
         }
     }
 
-    public class Sum : RepeatedExpression
+    public class Sum : RepeatedExpression_old
     {
         /*
         * Only for specific methods that are only possible with sums.
@@ -1516,7 +1515,7 @@ namespace Projekt_M_TestProgramm
         }
     }
 
-    public class Product : RepeatedExpression
+    public class Product : RepeatedExpression_old
     {
         static public Product Create(StringInfo input, out List<StringInfo> nextInputs)
         {
@@ -1555,6 +1554,222 @@ namespace Projekt_M_TestProgramm
             string output = "";
             for (int i = 0; i < Length; i++) output += this[i].ToString();
             return output;
+        }
+    }
+
+
+
+
+
+
+    public class RepeatedExpression : Expression
+    {
+        public OperationSet OperationSet { get; set; }
+        public List<Operation> Operations { get; set; }
+        public List<Expression> Expressions { get; set; }
+        public override int Length
+        {
+            get { return Expressions.Count; }
+        }
+
+        public override Expression this[int index]
+        {
+            get { return Expressions[index]; }
+            set { Expressions[index] = value; }
+        }
+
+        public RepeatedExpression(OperationSet operationSet, Expression expression0)
+        {
+            OperationSet = operationSet;
+            Operations = new List<Operation>();
+            Operations.Add(null);
+            Expressions = new List<Expression>();
+            Expressions.Add(expression0);
+        }
+        public RepeatedExpression(OperationSet operationSet, Expression expression0, Operation operation0, Expression expression1)
+        {
+            OperationSet = operationSet;
+            if (operation0.OperationSet != OperationSet) throw new ArgumentException("The Operation is not inside the OperationSet!");
+            Operations = new List<Operation>();
+            Operations.Add(null);
+            Operations.Add(operation0);
+            Expressions = new List<Expression>();
+            Expressions.Add(expression0);
+            Expressions.Add(expression1);
+        }
+
+        public void Add(Operation operation, Expression expression)
+        {
+            if (operation.OperationSet != OperationSet) throw new ArgumentException("The Operation is not inside the OperationSet!");
+            Operations.Add(operation);
+            Expressions.Add(expression);
+        }
+    }
+
+    public class Operation
+    {
+        public OperationSet OperationSet { get; set; }
+        public int Index { get; set; }
+        public string Symbol { get; set; }
+        public bool BaseOperation { get; set; }
+        public Variable Input0 { get; set; }
+        public Variable Input1 { get; set; }
+        public Expression Defintion { get; set; }
+
+        public bool Active { get; set; }
+        public bool Commutative { get; set; }
+        public bool Associative { get; set; }
+
+        public Operation(OperationSet operationSet, int index, string symbol = "*")
+        {
+            OperationSet = operationSet;
+            Index = index;
+            Symbol = symbol;
+        }
+
+        public override string ToString()
+        {
+            return "[" + Index + "] " + Symbol;
+        }
+    }
+    public class DistributiveConnection
+    {
+        public Operation Multiplication { get; set; }
+        public Operation Addition { get; set; }
+
+        /// <summary>
+        /// true: k*(x+y) = (k*x)+(k*y)
+        /// false: (x+y)*k = (x*k)+(y*k) 
+        /// null: both (true and false) 
+        /// </summary>
+        public bool? Order { get; set; }
+
+        public DistributiveConnection(Operation multiplication, Operation addition, bool? order = null)
+        {
+            Multiplication = multiplication;
+            Addition = addition;
+            Order = order;
+        }
+
+        public override string ToString()
+        {
+            switch (Order)
+            {
+                case true: return "k " + Multiplication.Symbol + " (x " + Addition.Symbol + " y) = (k " + Multiplication.Symbol + " x) " + Addition.Symbol + " (k " + Multiplication.Symbol + " y)";
+                case false: return "(x " + Addition.Symbol + " y) " + Multiplication.Symbol + " k = (x " + Multiplication.Symbol + " k) " + Addition.Symbol + " (y " + Multiplication.Symbol + " k)";
+                case null: return
+                        "k " + Multiplication.Symbol + " (x " + Addition.Symbol + " y) = (k " + Multiplication.Symbol + " x) " + Addition.Symbol + " (k " + Multiplication.Symbol + " y)   " +
+                        "(x " + Addition.Symbol + " y) " + Multiplication.Symbol + " k = (x " + Multiplication.Symbol + " k) " + Addition.Symbol + " (y " + Multiplication.Symbol + " k)";
+                default: throw new Exception();
+            }
+        }
+    }
+    public class OperationSet
+    {
+        public OperationStorage OperationStorage { get; set; }
+        public int Index { get; set; }
+        public List<Operation> Operations { get; set; }
+        public int Length
+        {
+            get { return Operations.Count; }
+        }
+        public bool LeftConnectionRule { get; set; }
+        public bool CalcReverse { get; set; }
+
+        public Operation this[int index]
+        {
+            get { return Operations[index]; }
+            set { Operations[index] = value; }
+        }
+
+        public OperationSet(OperationStorage operationStorage, int index)
+        {
+            OperationStorage = operationStorage;
+            Index = index;
+            Operations = new List<Operation>();
+        }
+
+        public void Add(Operation operation, bool resetLeftConnectionRule = true)
+        {
+            Operations.Add(operation);
+            if (resetLeftConnectionRule) LeftConnectionRule = false;
+        }
+
+        public override string ToString()
+        {
+            return "[" + Index + "] Length: " + Length;
+        }
+    }
+    public class OperationStorage
+    {
+        public List<OperationSet> OperationSets { get; set; }
+        public int NumberOfSets { get { return OperationSets.Count; } }
+        public int NumberOfOperations
+        {
+            get
+            {
+                int counter = 0;
+                for (int i = 0; i < OperationSets.Count; i++) counter += OperationSets[i].Length;
+                return counter;
+            }
+        }
+        public List<DistributiveConnection> DistributiveConnections { get; set; }
+
+        public OperationSet this[int index]
+        {
+            get { return OperationSets[index]; }
+            set { OperationSets[index] = value; }
+        }
+
+        public OperationStorage(bool standardOperations = true)
+        {
+            OperationSets = new List<OperationSet>();
+            if (standardOperations)
+            {
+                OperationSet operationSet = new OperationSet(this, 0);
+                Operation operation = new Operation(operationSet, 0, "+");
+                operation.BaseOperation = true;
+                operation.Commutative = true;
+                operation.Associative = true;
+                operationSet.Add(operation);
+                operation = new Operation(operationSet, 1, "-");
+                operation.BaseOperation = true;
+                operationSet.Add(operation);
+                operationSet.LeftConnectionRule = true;
+                Add(operationSet);
+                operationSet = new OperationSet(this, 1);
+                operation = new Operation(operationSet, 0, "*");
+                operation.BaseOperation = true;
+                operation.Commutative = true;
+                operation.Associative = true;
+                operationSet.Add(operation);
+                operation = new Operation(operationSet, 1, ":");
+                operation.BaseOperation = true;
+                operationSet.Add(operation);
+                operationSet.LeftConnectionRule = true;
+                Add(operationSet);
+                Add(new DistributiveConnection(this[1][0], this[0][0]));
+                Add(new DistributiveConnection(this[1][0], this[0][1]));
+                Add(new DistributiveConnection(this[1][1], this[0][0], false));
+                Add(new DistributiveConnection(this[1][1], this[0][1], false));
+            }
+        }
+
+        public void Add(OperationSet operationSet)
+        {
+            if (operationSet.OperationStorage != this) throw new ArgumentException();
+            OperationSets.Add(operationSet);
+        }
+        public void Add(DistributiveConnection distributiveConnection)
+        {
+            if (distributiveConnection.Multiplication.OperationSet.OperationStorage != this ||
+                distributiveConnection.Addition.OperationSet.OperationStorage != this) throw new ArgumentException();
+            DistributiveConnections.Add(distributiveConnection);
+        }
+
+        public override string ToString()
+        {
+            return "NumberOfSets: " + NumberOfSets + "; NumberOfOperations: " + NumberOfOperations;
         }
     }
 }
